@@ -1,0 +1,7 @@
+./analyzer.go
+./context.go
+./doc.go
+./lock.go
+./manifest.go
+./project.go
+./txn_writer.go

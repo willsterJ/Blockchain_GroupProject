@@ -1,0 +1,5 @@
+./generator.go
+./mockery.go
+./outputter.go
+./parse.go
+./walker.go

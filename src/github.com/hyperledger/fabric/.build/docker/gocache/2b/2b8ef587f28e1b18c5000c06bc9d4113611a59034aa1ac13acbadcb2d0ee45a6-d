@@ -1,0 +1,14 @@
+./bootstrap_command.go
+./build_command.go
+./convert_command.go
+./generate_command.go
+./help_command.go
+./main.go
+./nodot_command.go
+./notifications.go
+./run_command.go
+./run_watch_and_build_command_flags.go
+./suite_runner.go
+./unfocus_command.go
+./version_command.go
+./watch_command.go

@@ -1,0 +1,6 @@
+./archive.go
+./archive_unix.go
+./chroot_linux.go
+./diff.go
+./diff_unix.go
+./init_unix.go

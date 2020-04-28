@@ -1,0 +1,6 @@
+./ascii.go
+./proxy.go
+./tc.go
+./term.go
+./termios_linux.go
+./winsize.go

@@ -1,0 +1,13 @@
+./check.go
+./doc.go
+./ensure.go
+./failures.go
+./feature_flags.go
+./gopath_scanner.go
+./graphviz.go
+./init.go
+./main.go
+./prune.go
+./root_analyzer.go
+./status.go
+./version.go

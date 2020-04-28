@@ -1,0 +1,9 @@
+./collection.go
+./constraints.go
+./doc.go
+./error.go
+./magic.go
+./parse.go
+./range.go
+./union.go
+./version.go

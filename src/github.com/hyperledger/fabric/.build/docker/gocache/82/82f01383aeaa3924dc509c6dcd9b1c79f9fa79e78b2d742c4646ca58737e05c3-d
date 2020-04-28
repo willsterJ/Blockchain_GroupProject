@@ -1,0 +1,3 @@
+./file_posix.go
+./nodata_linux.go
+./xattr.go

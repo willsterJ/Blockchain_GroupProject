@@ -1,0 +1,3 @@
+./metadata.go
+./v1_id_service.go
+./v2_metadata_service.go

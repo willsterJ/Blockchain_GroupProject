@@ -1,0 +1,6 @@
+./ginkgo_ast_nodes.go
+./import.go
+./package_rewriter.go
+./test_finder.go
+./testfile_rewriter.go
+./testing_t_rewriter.go

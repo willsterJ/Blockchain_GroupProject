@@ -1,0 +1,8 @@
+./bzr.go
+./errors.go
+./git.go
+./hg.go
+./repo.go
+./svn.go
+./vcs_local_lookup.go
+./vcs_remote_lookup.go

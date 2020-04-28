@@ -1,0 +1,4 @@
+package system
+//go:cgo_import_dynamic __libc_start_main __libc_start_main#GLIBC_2.2.5 "libc.so.6"
+//go:cgo_import_dynamic sysconf sysconf#GLIBC_2.2.5 "libc.so.6"
+//go:cgo_import_dynamic _ _ "libc.so.6"

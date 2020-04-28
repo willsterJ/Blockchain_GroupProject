@@ -1,0 +1,8 @@
+./config.go
+./errors.go
+./pull.go
+./pull_v2.go
+./pull_v2_unix.go
+./push.go
+./push_v2.go
+./registry.go

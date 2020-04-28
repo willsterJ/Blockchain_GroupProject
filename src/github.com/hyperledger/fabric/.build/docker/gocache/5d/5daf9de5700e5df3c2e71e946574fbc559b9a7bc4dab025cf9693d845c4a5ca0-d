@@ -1,0 +1,4 @@
+./digest.go
+./lock.go
+./lockdiff.go
+./locksat.go

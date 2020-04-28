@@ -1,0 +1,7 @@
+./linux.go
+./proc.go
+./syscall_linux_64.go
+./xattrs_linux.go
+_cgo_gotypes.go
+sysconfig.cgo1.go
+_cgo_import.go
