@@ -360,6 +360,7 @@ func (t *TradeWorkflowChaincode) requestTrade(stub shim.ChaincodeStubInterface, 
 
 	// ADD TRADELIMIT RETRIEVAL HERE
 
+
 	// Access control: Only an Buyer Org member can invoke this transaction
 	if !t.testMode && !authenticateBuyerOrg(creatorOrg, creatorCertIssuer) {
 		return shim.Error("Caller not a member of Buyer Org. Access denied.")
@@ -393,7 +394,6 @@ func (t *TradeWorkflowChaincode) requestTrade(stub shim.ChaincodeStubInterface, 
 		return shim.Error(err.Error())
 	}
 	fmt.Printf("Trade %s request recorded\n", args[0])
-
 	return shim.Success(nil)
 }
 
@@ -435,24 +435,24 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 		return shim.Error(err.Error())
 	}
 
-	var queryString string
-	queryString = "{\"selector\":{\"descriptionOfGoods\":\""+tradeAgreement.DescriptionOfGoods+"\"}}"
-	resultsIterator, err := stub.GetQueryResult(queryString)
-	if err != nil {
-		return shim.Error("Failed to get query result.")
-	}
-	defer resultsIterator.Close()
-	for resultsIterator.HasNext() {
-		queryResponse, err := resultsIterator.Next()
-		if err != nil {
-			return shim.Error("Failed to do whatever.")
-		}
-		// t := fmt.Sprintf("%T", queryResponse)
-		x := json.Unmarshal(queryResponse.GetValue(), &x)
+	// var queryString string
+	// queryString = "{\"selector\":{\"descriptionOfGoods\":\""+tradeAgreement.DescriptionOfGoods+"\"}}"
+	// resultsIterator, err := stub.GetQueryResult(queryString)
+	// if err != nil {
+	// 	return shim.Error("Failed to get query result.")
+	// }
+	// defer resultsIterator.Close()
+	// for resultsIterator.HasNext() {
+	// 	queryResponse, err := resultsIterator.Next()
+	// 	if err != nil {
+	// 		return shim.Error("Failed to do whatever.")
+	// 	}
+	// 	// t := fmt.Sprintf("%T", queryResponse)
+	// 	x := json.Unmarshal(queryResponse.GetValue(), &x)
 		
 		
-		// fmt.Println(t)
-	}
+	// 	// fmt.Println(t)
+	// }
 
 	if tradeAgreement.Status == ACCEPTED {
 		fmt.Printf("Trade %s already accepted", args[0])
@@ -1138,38 +1138,237 @@ func (t *TradeWorkflowChaincode) getAccountBalance(stub shim.ChaincodeStubInterf
 // Seller requests an advertisement deal with middleman
 func (t *TradeWorkflowChaincode) requestAdvertisement(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
 	var contract *ContractSellerMiddleman
-	var contractBytes []bytes
+	var contractBytes []byte
 	var fee float64
-	var contractKey, middlemanKey, itemKey string
+	var contractKey string
 	var err error
+
+	// Access control: Only an Buyer Org member can invoke this transaction
+	if !t.testMode && !authenticateSellerOrg(creatorOrg, creatorCertIssuer) {
+		return shim.Error("Caller not a member of Seller Org. Access denied.")
+	}
 
 	if len(args) != 4 {
 		return shim.Error("Incorrect number of arguments. Expecting 4: {Contract ID, Middleman ID, Item ID, Fee}")
 	}
+
+	fee, err = strconv.ParseFloat(string(args[3]), 64)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// ADD TRADE LIMIT CHECK HERE 
+	
+	contract = &ContractSellerMiddleman{args[0], args[1], args[2], fee, REQUESTED}
+	contractBytes, err = json.Marshal(contract)
+	if err != nil {
+		return shim.Error("Error marshaling contract structure")
+	}
+
+	// Write the state to the ledger
+	contractKey, err = getTradeKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	err = stub.PutState(contractKey, contractBytes)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	fmt.Printf("Trade %s request recorded\n", args[0])
+	return shim.Success(nil)
 }
 
 func (t *TradeWorkflowChaincode) acceptAdvertisement(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
-	if len(args) != 1 {
-		return shim.Error("Incorrect number of arguments. Expecting 4: {Contract ID}")
+	var contractKey string
+	var contract *ContractSellerMiddleman
+	var contractBytes []byte
+	var err error
+
+	// Access control: Only an Exporting Entity Org member can invoke this transaction
+	if !t.testMode && !authenticateMiddlemanOrg(creatorOrg, creatorCertIssuer) {
+		return shim.Error("Caller not a member of Middleman Org. Access denied.")
 	}
+
+	if len(args) != 1 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 1: {ID}. Found %d", len(args)))
+		return shim.Error(err.Error())
+	}
+
+	// Get the state from the ledger
+	contractKey, err = getTradeKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	contractBytes, err = stub.GetState(contractKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	if len(contractBytes) == 0 {
+		err = errors.New(fmt.Sprintf("No record found for trade ID %s", args[0]))
+		return shim.Error(err.Error())
+	}
+
+	// Unmarshal the JSON
+	err = json.Unmarshal(contractBytes, &contract)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// var queryString string
+	// queryString = "{\"selector\":{\"descriptionOfGoods\":\""+tradeAgreement.DescriptionOfGoods+"\"}}"
+	// resultsIterator, err := stub.GetQueryResult(queryString)
+	// if err != nil {
+	// 	return shim.Error("Failed to get query result.")
+	// }
+	// defer resultsIterator.Close()
+	// for resultsIterator.HasNext() {
+	// 	queryResponse, err := resultsIterator.Next()
+	// 	if err != nil {
+	// 		return shim.Error("Failed to do whatever.")
+	// 	}
+	// 	// t := fmt.Sprintf("%T", queryResponse)
+	// 	x := json.Unmarshal(queryResponse.GetValue(), &x)
+		
+		
+	// 	// fmt.Println(t)
+	// }
+
+	if contract.Status == ACCEPTED {
+		fmt.Printf("Trade %s already accepted", args[0])
+	} else {
+		contract.Status = ACCEPTED
+		contractBytes, err = json.Marshal(contract)
+		if err != nil {
+			return shim.Error("Error marshaling trade agreement structure")
+		}
+		// Write the state to the ledger
+		err = stub.PutState(contractKey, contractBytes)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+	}
+	fmt.Printf("Trade %s acceptance recorded\n", args[0])
+
+	return shim.Success(nil)
 }
 
 func (t *TradeWorkflowChaincode) requestStorage(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
 	var contract *ContractSellerWarehouse
-	var contractBytes []bytes
+	var contractBytes []byte
 	var fee float64
-	var contractKey, warehouseKey, itemKey string
+	var contractKey string
 	var err error
+
+	// Access control: Only an Buyer Org member can invoke this transaction
+	if !t.testMode && !authenticateSellerOrg(creatorOrg, creatorCertIssuer) {
+		return shim.Error("Caller not a member of Seller Org. Access denied.")
+	}
 
 	if len(args) != 4 {
 		return shim.Error("Incorrect number of arguments. Expecting 4: {Contract ID, Warehouse ID, Item ID, Fee}")
 	}
+	fee, err = strconv.ParseFloat(string(args[3]), 64)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// ADD TRADE LIMIT CHECK HERE 
+	
+	contract = &ContractSellerWarehouse{args[0], args[1], args[2], fee, REQUESTED}
+	contractBytes, err = json.Marshal(contract)
+	if err != nil {
+		return shim.Error("Error marshaling contract structure")
+	}
+
+	// Write the state to the ledger
+	contractKey, err = getTradeKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	err = stub.PutState(contractKey, contractBytes)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	fmt.Printf("Trade %s request recorded\n", args[0])
+	return shim.Success(nil)
 }
 
 func (t *TradeWorkflowChaincode) acceptStorage(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
-	if len(args) != 1 {
-		return shim.Error("Incorrect number of arguments. Expecting 4: {Contract ID}")
+	var contractKey string
+	var contract *ContractSellerWarehouse
+	var contractBytes []byte
+	var err error
+
+	// Access control: Only an Exporting Entity Org member can invoke this transaction
+	if !t.testMode && !authenticateWarehouseOrg(creatorOrg, creatorCertIssuer) {
+		return shim.Error("Caller not a member of Warehouse Org. Access denied.")
 	}
+
+	if len(args) != 1 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 1: {ID}. Found %d", len(args)))
+		return shim.Error(err.Error())
+	}
+
+	// Get the state from the ledger
+	contractKey, err = getTradeKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	contractBytes, err = stub.GetState(contractKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	if len(contractBytes) == 0 {
+		err = errors.New(fmt.Sprintf("No record found for trade ID %s", args[0]))
+		return shim.Error(err.Error())
+	}
+
+	// Unmarshal the JSON
+	err = json.Unmarshal(contractBytes, &contract)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// var queryString string
+	// queryString = "{\"selector\":{\"descriptionOfGoods\":\""+tradeAgreement.DescriptionOfGoods+"\"}}"
+	// resultsIterator, err := stub.GetQueryResult(queryString)
+	// if err != nil {
+	// 	return shim.Error("Failed to get query result.")
+	// }
+	// defer resultsIterator.Close()
+	// for resultsIterator.HasNext() {
+	// 	queryResponse, err := resultsIterator.Next()
+	// 	if err != nil {
+	// 		return shim.Error("Failed to do whatever.")
+	// 	}
+	// 	// t := fmt.Sprintf("%T", queryResponse)
+	// 	x := json.Unmarshal(queryResponse.GetValue(), &x)
+		
+		
+	// 	// fmt.Println(t)
+	// }
+
+	if contract.Status == ACCEPTED {
+		fmt.Printf("Trade %s already accepted", args[0])
+	} else {
+		contract.Status = ACCEPTED
+		contractBytes, err = json.Marshal(contract)
+		if err != nil {
+			return shim.Error("Error marshaling trade agreement structure")
+		}
+		// Write the state to the ledger
+		err = stub.PutState(contractKey, contractBytes)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+	}
+	fmt.Printf("Trade %s acceptance recorded\n", args[0])
+
+	return shim.Success(nil)
 }
 
 func main() {
