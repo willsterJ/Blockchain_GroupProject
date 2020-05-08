@@ -33,14 +33,11 @@ type TradeAgreement struct {
 }
 type BillOfLading struct {
 	Id                 string `json:"id"`
-	ExpirationDate     string `json:"expirationDate"`
-	Exporter           string `json:"exporter"`
-	Carrier            string `json:"carrier"`
-	DescriptionOfGoods string `json:"descriptionOfGoods"`
+	Seller             string `json:"seller"`
+	ItemId 			   string `json:"ItemId"`
 	Amount             int    `json:"amount"`
-	Beneficiary        string `json:"beneficiary"`
-	SourcePort         string `json:"sourcePort"`
-	DestinationPort    string `json:"destinationPort"`
+	Buyer              string `json:"buyer"`
+	Status 			   string `json:"status"`
 }
 type ContractSellerMiddleman struct {
 	Id          string  `json:"id"`
