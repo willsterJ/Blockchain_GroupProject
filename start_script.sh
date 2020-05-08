@@ -39,10 +39,10 @@ sleep 15
 
 cd $GOPATH
 
-docker cp ./dev_mode_cli_run.sh cli:/opt/gopath/src/chaincodedev/
-docker cp ./dev_mode_test_run.sh cli:/opt/gopath/src/chaincodedev/
+docker cp ./scripts/dev_mode_cli_run.sh cli:/opt/gopath/src/chaincodedev/
+docker cp ./scripts/dev_mode_test_run.sh cli:/opt/gopath/src/chaincodedev/
 
-docker cp ./dev_mode_chaincode_run.sh chaincode:/opt/gopath/src/chaincode/
+docker cp ./scripts/dev_mode_chaincode_run.sh chaincode:/opt/gopath/src/chaincode/
 
 docker exec -ti chaincode bash
 
