@@ -1,6 +1,0 @@
-./node.go
-./reset.go
-./rollback.go
-./signals.go
-./start.go
-./status.go
