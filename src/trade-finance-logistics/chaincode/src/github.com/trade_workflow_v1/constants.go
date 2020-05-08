@@ -27,6 +27,7 @@ const (
 	warKey = "Warehouse"
 	warBalKey = "WarehousesAccountBalance"
 	carKey		= "Carrier"
+	carBalKey = "CarriersAccountBalance"
 )
 
 // State values

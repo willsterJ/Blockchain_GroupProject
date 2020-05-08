@@ -44,14 +44,17 @@ type BillOfLading struct {
 }
 type ContractSellerMiddleman struct{
 	Id			string		`json:"id"`
-	WarehouseId string `json:"warehouse id"`
 	MiddlemanId string `json:"middleman id"`
+	ItemId string `json:"item id"`
 	Fee float64 `json:"fee"`
+	Status string  `json:"status"`
 }
 type ContractSellerWarehouse struct{
 	Id			string		`json:"id"`
 	WarehouseId string `json:"warehouse id"`
+	ItemId string `json:"item id"`
 	Fee float64 `json:"fee"`
+	Status string  `json:"status"`
 }
 
 /* // original
