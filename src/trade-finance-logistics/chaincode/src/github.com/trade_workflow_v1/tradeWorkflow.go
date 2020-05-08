@@ -17,11 +17,12 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
-	"encoding/json"
+
 	//"math/rand"
 	"bytes"
 
@@ -46,18 +47,18 @@ func (t *TradeWorkflowChaincode) Init(stub shim.ChaincodeStubInterface) pb.Respo
 
 	// Upgrade mode 2: change all the names and account balances
 	if len(args) != 10 {
-		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 10: {" +
-					     "Buyer, " +
-					     "Buyer's Account Balance, " +
-					     "Seller, " +
-						 "Seller's Account Balance, " +
-						 "Middleman, " +
-						 "Middleman's Account Balance, " +
-						 "Warehouse, " +
-						 "Warehouse's Account Balance, " +
-					     "Carrier" +
-					     "Carrier's Account Balance, " +
-					     "}. Found %d", len(args)))
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 10: {"+
+			"Buyer, "+
+			"Buyer's Account Balance, "+
+			"Seller, "+
+			"Seller's Account Balance, "+
+			"Middleman, "+
+			"Middleman's Account Balance, "+
+			"Warehouse, "+
+			"Warehouse's Account Balance, "+
+			"Carrier"+
+			"Carrier's Account Balance, "+
+			"}. Found %d", len(args)))
 		return shim.Error(err.Error())
 	}
 
@@ -85,7 +86,7 @@ func (t *TradeWorkflowChaincode) Init(stub shim.ChaincodeStubInterface) pb.Respo
 	fmt.Printf("Carrier's Account Balance: %s\n", args[9])
 
 	// Map participant identities to their roles on the ledger
-	roleKeys := []string{ buyKey, buyBalKey, selKey, selBalKey, midKey, midBalKey, warKey, warBalKey, carKey, carBalKey }
+	roleKeys := []string{buyKey, buyBalKey, selKey, selBalKey, midKey, midBalKey, warKey, warBalKey, carKey, carBalKey}
 	for i, roleKey := range roleKeys {
 		err = stub.PutState(roleKey, []byte(args[i]))
 		if err != nil {
@@ -116,10 +117,10 @@ func (t *TradeWorkflowChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Res
 	if function == "initItem" {
 		// Initialize item object
 		return t.initItem(stub, creatorOrg, creatorCertIssuer, args)
-	} else if function == "queryItems"{
+	} else if function == "queryItems" {
 		// query call to couchDB
 		return t.queryItems(stub, creatorOrg, creatorCertIssuer, args)
-	} else if function == "updateItem"{
+	} else if function == "updateItem" {
 		// update item
 		return t.updateItem(stub, creatorOrg, creatorCertIssuer, args)
 	} else if function == "requestTrade" {
@@ -149,7 +150,7 @@ func (t *TradeWorkflowChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Res
 	} else if function == "getAccountBalance" {
 		// Get account balance: Exporter/Importer
 		return t.getAccountBalance(stub, creatorOrg, creatorCertIssuer, args)
-	/*} else if function == "delete" {
+		/*} else if function == "delete" {
 		// Deletes an entity from its state
 		return t.delete(stub, creatorOrg, creatorCertIssuer, args)*/
 	} else if function == "requestAdvertisement" {
@@ -198,7 +199,7 @@ func (t *TradeWorkflowChaincode) initItem(stub shim.ChaincodeStubInterface, crea
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-	if t.testMode{
+	if t.testMode {
 		itemId = string(role + "" + itemName)
 	}
 
@@ -211,7 +212,7 @@ func (t *TradeWorkflowChaincode) initItem(stub shim.ChaincodeStubInterface, crea
 		return shim.Error("This item already exists: " + itemId + " , name:" + itemName)
 	}
 	// Create item object and marshal to JSON  // TODO change creatorOrg to something unique!
-	itemEntry = &ItemEntry {itemId, itemName, creatorOrg, "", "", price, count}
+	itemEntry = &ItemEntry{itemId, itemName, creatorOrg, "", "", price, count}
 	itemEntryBytes, err = json.Marshal(itemEntry)
 	if err != nil {
 		return shim.Error("Error marshaling ItemEntry structure")
@@ -221,8 +222,8 @@ func (t *TradeWorkflowChaincode) initItem(stub shim.ChaincodeStubInterface, crea
 	err = stub.PutState(itemId, itemEntryBytes)
 	if err != nil {
 		return shim.Error(err.Error())
-	}	
-	
+	}
+
 	return shim.Success(nil)
 }
 
@@ -360,7 +361,6 @@ func (t *TradeWorkflowChaincode) requestTrade(stub shim.ChaincodeStubInterface, 
 
 	// ADD TRADELIMIT RETRIEVAL HERE
 
-
 	// Access control: Only an Buyer Org member can invoke this transaction
 	if !t.testMode && !authenticateBuyerOrg(creatorOrg, creatorCertIssuer) {
 		return shim.Error("Caller not a member of Buyer Org. Access denied.")
@@ -376,8 +376,8 @@ func (t *TradeWorkflowChaincode) requestTrade(stub shim.ChaincodeStubInterface, 
 		return shim.Error(err.Error())
 	}
 
-	// ADD TRADE LIMIT CHECK HERE 
-	
+	// ADD TRADE LIMIT CHECK HERE
+
 	tradeAgreement = &TradeAgreement{amount, args[2], REQUESTED, 0}
 	tradeAgreementBytes, err = json.Marshal(tradeAgreement)
 	if err != nil {
@@ -449,8 +449,7 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 	// 	}
 	// 	// t := fmt.Sprintf("%T", queryResponse)
 	// 	x := json.Unmarshal(queryResponse.GetValue(), &x)
-		
-		
+
 	// 	// fmt.Println(t)
 	// }
 
@@ -472,6 +471,7 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 
 	return shim.Success(nil)
 }
+
 /*
 // Prepare a shipment; preparation is indicated by setting the location as SOURCE
 func (t *TradeWorkflowChaincode) prepareShipment(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
@@ -549,100 +549,100 @@ func (t *TradeWorkflowChaincode) prepareShipment(stub shim.ChaincodeStubInterfac
 */
 // Accept a shipment and issue a B/L
 func (t *TradeWorkflowChaincode) acceptShipmentAndIssueBL(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
-/*	var shipmentLocationKey, blKey, tradeKey string
-	var shipmentLocationBytes, tradeAgreementBytes, billOfLadingBytes, exporterBytes, carrierBytes, beneficiaryBytes []byte
-	var billOfLading *BillOfLading
-	var tradeAgreement *TradeAgreement
-	var err error
+	/*	var shipmentLocationKey, blKey, tradeKey string
+		var shipmentLocationBytes, tradeAgreementBytes, billOfLadingBytes, exporterBytes, carrierBytes, beneficiaryBytes []byte
+		var billOfLading *BillOfLading
+		var tradeAgreement *TradeAgreement
+		var err error
 
-	// Access control: Only an Carrier Org member can invoke this transaction
-	if !t.testMode && !authenticateCarrierOrg(creatorOrg, creatorCertIssuer) {
-		return shim.Error("Caller not a member of Carrier Org. Access denied.")
-	}
+		// Access control: Only an Carrier Org member can invoke this transaction
+		if !t.testMode && !authenticateCarrierOrg(creatorOrg, creatorCertIssuer) {
+			return shim.Error("Caller not a member of Carrier Org. Access denied.")
+		}
 
-	if len(args) != 5 {
-		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 5: {Trade ID, B/L ID, Expiration Date, Source Port, Destination Port}. Found %d", len(args)))
-		return shim.Error(err.Error())
-	}
+		if len(args) != 5 {
+			err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 5: {Trade ID, B/L ID, Expiration Date, Source Port, Destination Port}. Found %d", len(args)))
+			return shim.Error(err.Error())
+		}
 
-	// Lookup shipment location from the ledger
-	shipmentLocationKey, err = getShipmentLocationKey(stub, args[0])
-	if err != nil {
-		return shim.Error(err.Error())
-	}
+		// Lookup shipment location from the ledger
+		shipmentLocationKey, err = getShipmentLocationKey(stub, args[0])
+		if err != nil {
+			return shim.Error(err.Error())
+		}
 
-	shipmentLocationBytes, err = stub.GetState(shipmentLocationKey)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
+		shipmentLocationBytes, err = stub.GetState(shipmentLocationKey)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
 
-	if len(shipmentLocationBytes) == 0 {
-		fmt.Printf("Shipment for trade %s has not been prepared yet", args[0])
-		return shim.Error("Shipment not prepared yet")
-	}
-	if string(shipmentLocationBytes) != SOURCE {
-		fmt.Printf("Shipment for trade %s has passed the preparation stage", args[0])
-		return shim.Error("Shipment past the preparation stage")
-	}
+		if len(shipmentLocationBytes) == 0 {
+			fmt.Printf("Shipment for trade %s has not been prepared yet", args[0])
+			return shim.Error("Shipment not prepared yet")
+		}
+		if string(shipmentLocationBytes) != SOURCE {
+			fmt.Printf("Shipment for trade %s has passed the preparation stage", args[0])
+			return shim.Error("Shipment past the preparation stage")
+		}
 
-	// Lookup trade agreement from the ledger
-	tradeKey, err = getTradeKey(stub, args[0])
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	tradeAgreementBytes, err = stub.GetState(tradeKey)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
+		// Lookup trade agreement from the ledger
+		tradeKey, err = getTradeKey(stub, args[0])
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		tradeAgreementBytes, err = stub.GetState(tradeKey)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
 
-	if len(tradeAgreementBytes) == 0 {
-		err = errors.New(fmt.Sprintf("No record found for trade ID %s", args[0]))
-		return shim.Error(err.Error())
-	}
+		if len(tradeAgreementBytes) == 0 {
+			err = errors.New(fmt.Sprintf("No record found for trade ID %s", args[0]))
+			return shim.Error(err.Error())
+		}
 
-	// Unmarshal the JSON
-	err = json.Unmarshal(tradeAgreementBytes, &tradeAgreement)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
+		// Unmarshal the JSON
+		err = json.Unmarshal(tradeAgreementBytes, &tradeAgreement)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
 
-	// Lookup exporter
-	exporterBytes, err = stub.GetState(expKey)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
+		// Lookup exporter
+		exporterBytes, err = stub.GetState(expKey)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
 
-	// Lookup carrier
-	carrierBytes, err = stub.GetState(carKey)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
+		// Lookup carrier
+		carrierBytes, err = stub.GetState(carKey)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
 
-	// Lookup importer's bank (beneficiary of the title to goods after paymen tis made)
-	beneficiaryBytes, err = stub.GetState(ibKey)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
+		// Lookup importer's bank (beneficiary of the title to goods after paymen tis made)
+		beneficiaryBytes, err = stub.GetState(ibKey)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
 
-	// Create and record a B/L
-	billOfLading = &BillOfLading{args[1], args[2], string(exporterBytes), string(carrierBytes), tradeAgreement.DescriptionOfGoods,
-				     tradeAgreement.Amount, string(beneficiaryBytes), args[3], args[4]}
-	billOfLadingBytes, err = json.Marshal(billOfLading)
-	if err != nil {
-		return shim.Error("Error marshaling bill of lading structure")
-	}
+		// Create and record a B/L
+		billOfLading = &BillOfLading{args[1], args[2], string(exporterBytes), string(carrierBytes), tradeAgreement.DescriptionOfGoods,
+					     tradeAgreement.Amount, string(beneficiaryBytes), args[3], args[4]}
+		billOfLadingBytes, err = json.Marshal(billOfLading)
+		if err != nil {
+			return shim.Error("Error marshaling bill of lading structure")
+		}
 
-	// Write the state to the ledger
-	blKey, err = getBLKey(stub, args[0])
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	err = stub.PutState(blKey, billOfLadingBytes)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	fmt.Printf("Bill of Lading for trade %s recorded\n", args[0])
-*/
+		// Write the state to the ledger
+		blKey, err = getBLKey(stub, args[0])
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		err = stub.PutState(blKey, billOfLadingBytes)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		fmt.Printf("Bill of Lading for trade %s recorded\n", args[0])
+	*/
 	return shim.Success(nil)
 }
 
@@ -710,16 +710,16 @@ func (t *TradeWorkflowChaincode) requestPayment(stub shim.ChaincodeStubInterface
 		return shim.Error(err.Error())
 	}
 
-	if len(paymentBytes) != 0 {	// The value doesn't matter as this is a temporary key used as a marker
+	if len(paymentBytes) != 0 { // The value doesn't matter as this is a temporary key used as a marker
 		fmt.Printf("Payment request already pending for trade %s\n", args[0])
 	} else {
 		// Check what has been paid up to this point
 		fmt.Printf("Amount paid thus far for trade %s = %d; total required = %d\n", args[0], tradeAgreement.Payment, tradeAgreement.Amount)
-		if tradeAgreement.Amount == tradeAgreement.Payment {	// Payment has already been settled
+		if tradeAgreement.Amount == tradeAgreement.Payment { // Payment has already been settled
 			fmt.Printf("Payment already settled for trade %s\n", args[0])
 			return shim.Error("Payment already settled")
 		}
-		if string(shipmentLocationBytes) == SOURCE && tradeAgreement.Payment != 0 {	// Suppress duplicate requests for partial payment
+		if string(shipmentLocationBytes) == SOURCE && tradeAgreement.Payment != 0 { // Suppress duplicate requests for partial payment
 			fmt.Printf("Partial payment already made for trade %s\n", args[0])
 			return shim.Error("Partial payment already made")
 		}
@@ -846,7 +846,7 @@ func (t *TradeWorkflowChaincode) makePayment(stub shim.ChaincodeStubInterface, c
 		return shim.Error(err.Error())
 	}
 
-	// Record transfer of funds 
+	// Record transfer of funds
 	// if string(shipmentLocationBytes) == SOURCE {
 	// 	paymentAmount = tradeAgreement.Amount/2
 	// } else {
@@ -859,10 +859,10 @@ func (t *TradeWorkflowChaincode) makePayment(stub shim.ChaincodeStubInterface, c
 	carRate = 0.025
 	paymentAmount = float64(tradeAgreement.Amount)
 	tradeAgreement.Payment += int(paymentAmount)
-	midBal += paymentAmount*midRate
-	selBal += paymentAmount*selRate
-	warBal += paymentAmount*warRate
-	carBal += paymentAmount*carRate
+	midBal += paymentAmount * midRate
+	selBal += paymentAmount * selRate
+	warBal += paymentAmount * warRate
+	carBal += paymentAmount * carRate
 
 	if buyBal < paymentAmount {
 		fmt.Printf("Buyer's bank balance %d is insufficient to cover payment amount %d\n", buyBal, paymentAmount)
@@ -1086,7 +1086,7 @@ func (t *TradeWorkflowChaincode) getAccountBalance(stub shim.ChaincodeStubInterf
 	entity = strings.ToLower(args[1])
 	if entity == "seller" {
 		// Access control: Only an Exporter or Exporting Entity Org member can invoke this transaction
-		if !t.testMode && !authenticateSellerOrg(creatorOrg, creatorCertIssuer){
+		if !t.testMode && !authenticateSellerOrg(creatorOrg, creatorCertIssuer) {
 			return shim.Error("Caller not a member of Seller Org. Access denied.")
 		}
 		balanceKey = selBalKey
@@ -1135,7 +1135,7 @@ func (t *TradeWorkflowChaincode) getAccountBalance(stub shim.ChaincodeStubInterf
 	return shim.Success([]byte(jsonResp))
 }
 
-// Seller requests an advertisement deal with middleman
+// Seller requests an advertisement deal with Middleman
 func (t *TradeWorkflowChaincode) requestAdvertisement(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
 	var contract *ContractSellerMiddleman
 	var contractBytes []byte
@@ -1157,8 +1157,8 @@ func (t *TradeWorkflowChaincode) requestAdvertisement(stub shim.ChaincodeStubInt
 		return shim.Error(err.Error())
 	}
 
-	// ADD TRADE LIMIT CHECK HERE 
-	
+	// ADD TRADE LIMIT CHECK HERE
+
 	contract = &ContractSellerMiddleman{args[0], args[1], args[2], fee, REQUESTED}
 	contractBytes, err = json.Marshal(contract)
 	if err != nil {
@@ -1179,10 +1179,12 @@ func (t *TradeWorkflowChaincode) requestAdvertisement(stub shim.ChaincodeStubInt
 	return shim.Success(nil)
 }
 
+// Middleman accepts advertisement request from Buyer
 func (t *TradeWorkflowChaincode) acceptAdvertisement(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
-	var contractKey string
+	var contractKey, itemId string
 	var contract *ContractSellerMiddleman
-	var contractBytes []byte
+	var itemEntry *ItemEntry
+	var contractBytes, itemEntryBytes []byte
 	var err error
 
 	// Access control: Only an Exporting Entity Org member can invoke this transaction
@@ -1195,7 +1197,7 @@ func (t *TradeWorkflowChaincode) acceptAdvertisement(stub shim.ChaincodeStubInte
 		return shim.Error(err.Error())
 	}
 
-	// Get the state from the ledger
+	// Get the contract state from the ledger
 	contractKey, err = getTradeKey(stub, args[0])
 	if err != nil {
 		return shim.Error(err.Error())
@@ -1216,28 +1218,11 @@ func (t *TradeWorkflowChaincode) acceptAdvertisement(stub shim.ChaincodeStubInte
 		return shim.Error(err.Error())
 	}
 
-	// var queryString string
-	// queryString = "{\"selector\":{\"descriptionOfGoods\":\""+tradeAgreement.DescriptionOfGoods+"\"}}"
-	// resultsIterator, err := stub.GetQueryResult(queryString)
-	// if err != nil {
-	// 	return shim.Error("Failed to get query result.")
-	// }
-	// defer resultsIterator.Close()
-	// for resultsIterator.HasNext() {
-	// 	queryResponse, err := resultsIterator.Next()
-	// 	if err != nil {
-	// 		return shim.Error("Failed to do whatever.")
-	// 	}
-	// 	// t := fmt.Sprintf("%T", queryResponse)
-	// 	x := json.Unmarshal(queryResponse.GetValue(), &x)
-		
-		
-	// 	// fmt.Println(t)
-	// }
-
+	// Check if contract had already been accepted.
 	if contract.Status == ACCEPTED {
 		fmt.Printf("Trade %s already accepted", args[0])
 	} else {
+		// update status to ACCEPTED
 		contract.Status = ACCEPTED
 		contractBytes, err = json.Marshal(contract)
 		if err != nil {
@@ -1248,12 +1233,40 @@ func (t *TradeWorkflowChaincode) acceptAdvertisement(stub shim.ChaincodeStubInte
 		if err != nil {
 			return shim.Error(err.Error())
 		}
+
+		// UPDATE ENTRY FIELD
+		// Get the item entry in the database using the contract fields
+		itemId = contract.ItemId
+		itemEntryBytes, err = stub.GetState(itemId)
+		if err != nil {
+			return shim.Error("Failed to get item: " + err.Error())
+		}
+
+		err = json.Unmarshal(itemEntryBytes, &itemEntry)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+
+		// Update the middleman field of the item entry
+		itemEntry.Middleman = contract.MiddlemanId
+
+		itemEntryBytes, err = json.Marshal(itemEntry)
+		if err != nil {
+			return shim.Error("Error marshaling ItemEntry structure")
+		}
+
+		// Save item to state
+		err = stub.PutState(itemId, itemEntryBytes)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
 	}
 	fmt.Printf("Trade %s acceptance recorded\n", args[0])
 
 	return shim.Success(nil)
 }
 
+// Seller requests storage from Warehouse
 func (t *TradeWorkflowChaincode) requestStorage(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
 	var contract *ContractSellerWarehouse
 	var contractBytes []byte
@@ -1274,8 +1287,8 @@ func (t *TradeWorkflowChaincode) requestStorage(stub shim.ChaincodeStubInterface
 		return shim.Error(err.Error())
 	}
 
-	// ADD TRADE LIMIT CHECK HERE 
-	
+	// ADD TRADE LIMIT CHECK HERE
+
 	contract = &ContractSellerWarehouse{args[0], args[1], args[2], fee, REQUESTED}
 	contractBytes, err = json.Marshal(contract)
 	if err != nil {
@@ -1296,10 +1309,12 @@ func (t *TradeWorkflowChaincode) requestStorage(stub shim.ChaincodeStubInterface
 	return shim.Success(nil)
 }
 
+// Warehouse accepts storage request from Seller
 func (t *TradeWorkflowChaincode) acceptStorage(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
-	var contractKey string
+	var contractKey, itemId string
 	var contract *ContractSellerWarehouse
-	var contractBytes []byte
+	var itemEntry *ItemEntry
+	var contractBytes, itemEntryBytes []byte
 	var err error
 
 	// Access control: Only an Exporting Entity Org member can invoke this transaction
@@ -1333,25 +1348,6 @@ func (t *TradeWorkflowChaincode) acceptStorage(stub shim.ChaincodeStubInterface,
 		return shim.Error(err.Error())
 	}
 
-	// var queryString string
-	// queryString = "{\"selector\":{\"descriptionOfGoods\":\""+tradeAgreement.DescriptionOfGoods+"\"}}"
-	// resultsIterator, err := stub.GetQueryResult(queryString)
-	// if err != nil {
-	// 	return shim.Error("Failed to get query result.")
-	// }
-	// defer resultsIterator.Close()
-	// for resultsIterator.HasNext() {
-	// 	queryResponse, err := resultsIterator.Next()
-	// 	if err != nil {
-	// 		return shim.Error("Failed to do whatever.")
-	// 	}
-	// 	// t := fmt.Sprintf("%T", queryResponse)
-	// 	x := json.Unmarshal(queryResponse.GetValue(), &x)
-		
-		
-	// 	// fmt.Println(t)
-	// }
-
 	if contract.Status == ACCEPTED {
 		fmt.Printf("Trade %s already accepted", args[0])
 	} else {
@@ -1362,6 +1358,33 @@ func (t *TradeWorkflowChaincode) acceptStorage(stub shim.ChaincodeStubInterface,
 		}
 		// Write the state to the ledger
 		err = stub.PutState(contractKey, contractBytes)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+
+		// UPDATE ENTRY FIELD
+		// Get the item entry in the database using the contract fields
+		itemId = contract.ItemId
+		itemEntryBytes, err = stub.GetState(itemId)
+		if err != nil {
+			return shim.Error("Failed to get item: " + err.Error())
+		}
+
+		err = json.Unmarshal(itemEntryBytes, &itemEntry)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+
+		// Update the middleman field of the item entry
+		itemEntry.Warehouse = contract.WarehouseId
+
+		itemEntryBytes, err = json.Marshal(itemEntry)
+		if err != nil {
+			return shim.Error("Error marshaling ItemEntry structure")
+		}
+
+		// Save item to state
+		err = stub.PutState(itemId, itemEntryBytes)
 		if err != nil {
 			return shim.Error(err.Error())
 		}
