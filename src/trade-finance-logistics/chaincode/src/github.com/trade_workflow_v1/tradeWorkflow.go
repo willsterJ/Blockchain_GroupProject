@@ -161,6 +161,8 @@ func (t *TradeWorkflowChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Res
 		return t.requestStorage(stub, creatorOrg, creatorCertIssuer, args)
 	} else if function == "acceptStorage" {
 		return t.acceptStorage(stub, creatorOrg, creatorCertIssuer, args)
+	} else if function == "prepareShipment" {
+		return t.prepareShipment(stub, creatorOrg, creatorCertIssuer, args)
 	}
 
 	return shim.Error("Invalid invoke function name")
@@ -1391,6 +1393,49 @@ func (t *TradeWorkflowChaincode) acceptStorage(stub shim.ChaincodeStubInterface,
 	}
 	fmt.Printf("Trade %s acceptance recorded\n", args[0])
 
+	return shim.Success(nil)
+}
+
+func (t *TradeWorkflowChaincode) prepareShipment(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
+	var billOfLading *BillOfLading
+	var billOfLadingBytes []byte
+	var billOfLadingKey string
+	var amount int
+	var err error
+
+	if !t.testMode && !authenticateCarrierOrg(creatorOrg, creatorCertIssuer) {
+		return shim.Error("Caller not a member of Ccarrier Org. Access denied.")
+	}
+
+	if len(args) != 5 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 5: {ID, Seller ID, Item ID, Amount, Buyer}. Found %d", len(args)))
+		return shim.Error(err.Error())
+	}
+
+	amount, err = strconv.Atoi(string(args[3]))
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// ADD TRADE LIMIT CHECK HERE
+
+	billOfLading = &BillOfLading{args[0], args[1], args[2], amount, args[3], PREPARED}
+	billOfLadingBytes, err = json.Marshal(billOfLading)
+	if err != nil {
+		return shim.Error("Error marshaling billOfLading structure")
+	}
+
+	// Write the state to the ledger
+	billOfLadingKey, err = getTradeKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	err = stub.PutState(billOfLadingKey, billOfLadingBytes)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	fmt.Printf("Preparing shipment %s of item %s for buyer %s", args[0], args[2], args[4])
 	return shim.Success(nil)
 }
 
