@@ -1,8 +1,0 @@
-./event.go
-./export.go
-./key.go
-./label.go
-./log.go
-./metric.go
-./tag.go
-./trace.go

@@ -1,9 +1,0 @@
-./expiration.go
-./filter.go
-./maintenancefilter.go
-./msgprocessor.go
-./sigfilter.go
-./sizefilter.go
-./standardchannel.go
-./systemchannel.go
-./systemchannelfilter.go
