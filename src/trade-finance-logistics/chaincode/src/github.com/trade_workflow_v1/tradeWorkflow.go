@@ -1177,7 +1177,7 @@ func (t *TradeWorkflowChaincode) requestAdvertisement(stub shim.ChaincodeStubInt
 		return shim.Error(err.Error())
 	}
 
-	fmt.Printf("Trade %s request recorded\n", args[0])
+	fmt.Printf("Advertisement Contract %s request recorded\n", args[0])
 	return shim.Success(nil)
 }
 
@@ -1222,13 +1222,13 @@ func (t *TradeWorkflowChaincode) acceptAdvertisement(stub shim.ChaincodeStubInte
 
 	// Check if contract had already been accepted.
 	if contract.Status == ACCEPTED {
-		fmt.Printf("Trade %s already accepted", args[0])
+		fmt.Printf("Advertisement Contract %s already accepted", args[0])
 	} else {
 		// update status to ACCEPTED
 		contract.Status = ACCEPTED
 		contractBytes, err = json.Marshal(contract)
 		if err != nil {
-			return shim.Error("Error marshaling trade agreement structure")
+			return shim.Error("Error marshaling advertisement contract structure")
 		}
 		// Write the state to the ledger
 		err = stub.PutState(contractKey, contractBytes)
@@ -1263,7 +1263,7 @@ func (t *TradeWorkflowChaincode) acceptAdvertisement(stub shim.ChaincodeStubInte
 			return shim.Error(err.Error())
 		}
 	}
-	fmt.Printf("Trade %s acceptance recorded\n", args[0])
+	fmt.Printf("Advertisement Contract %s acceptance recorded\n", args[0])
 
 	return shim.Success(nil)
 }
@@ -1307,7 +1307,7 @@ func (t *TradeWorkflowChaincode) requestStorage(stub shim.ChaincodeStubInterface
 		return shim.Error(err.Error())
 	}
 
-	fmt.Printf("Trade %s request recorded\n", args[0])
+	fmt.Printf("Storage Contract %s request recorded\n", args[0])
 	return shim.Success(nil)
 }
 
@@ -1351,7 +1351,7 @@ func (t *TradeWorkflowChaincode) acceptStorage(stub shim.ChaincodeStubInterface,
 	}
 
 	if contract.Status == ACCEPTED {
-		fmt.Printf("Trade %s already accepted", args[0])
+		fmt.Printf("Storage Contract %s already accepted", args[0])
 	} else {
 		contract.Status = ACCEPTED
 		contractBytes, err = json.Marshal(contract)
@@ -1391,7 +1391,7 @@ func (t *TradeWorkflowChaincode) acceptStorage(stub shim.ChaincodeStubInterface,
 			return shim.Error(err.Error())
 		}
 	}
-	fmt.Printf("Trade %s acceptance recorded\n", args[0])
+	fmt.Printf("Storage Contract %s acceptance recorded\n", args[0])
 
 	return shim.Success(nil)
 }
@@ -1441,7 +1441,7 @@ func (t *TradeWorkflowChaincode) prepareShipment(stub shim.ChaincodeStubInterfac
 
 func main() {
 	twc := new(TradeWorkflowChaincode)
-	twc.testMode = false
+	twc.testMode = true
 	err := shim.Start(twc)
 	if err != nil {
 		fmt.Printf("Error starting Trade Workflow chaincode: %s", err)
