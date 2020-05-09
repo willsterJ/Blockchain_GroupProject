@@ -229,7 +229,7 @@ function upgradeNetwork () {
   docker cp -a orderer.trade.com:/var/hyperledger/production/orderer $LEDGERS_BACKUP/orderer.trade.com
   docker-compose $COMPOSE_FILES up --no-deps orderer.trade.com
 
-  for PEER in peer0.sellerorg.trade.com peer0.buyerorg.trade.com peer0.carrierorg.trade.com peer0.middlemanorg.trade.com peer0.warehouseorg.trade.com; do
+  for PEER in peer0.seller0org.trade.com peer0.seller1org.trade.com peer0.buyer0org.trade.com peer0.buyer1org.trade.com peer0.carrierorg.trade.com peer0.middlemanorg.trade.com peer0.warehouseorg.trade.com; do
     echo "Upgrading peer $PEER"
 
     # Stop the peer and backup its ledger
@@ -260,7 +260,7 @@ function networkDown () {
 
   docker-compose -f $COMPOSE_FILE down --volumes
 
-  for PEER in peer0.seller0org.trade.com peer0.seller1org.trade.com peer0.buyer0org.trade.com peer0.buyer1.trade.com peer0.carrierorg.trade.com peer0.middlemanorg.trade.com peer0.warehouseorg.trade.com; do
+  for PEER in peer0.seller0org.trade.com peer0.seller1org.trade.com peer0.buyer0org.trade.com peer0.buyer1org.trade.com peer0.carrierorg.trade.com peer0.middlemanorg.trade.com peer0.warehouseorg.trade.com; do
     # Remove any old containers and images for this peer
     CC_CONTAINERS=$(docker ps -a | grep dev-$PEER | awk '{print $1}')
     if [ -n "$CC_CONTAINERS" ] ; then

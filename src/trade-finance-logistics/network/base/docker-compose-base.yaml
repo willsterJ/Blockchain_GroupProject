@@ -78,8 +78,8 @@ services:
       - CORE_PEER_LOCALMSPID=Seller1OrgMSP
     volumes:
         - /var/run/:/host/var/run/
-        - ../crypto-config/peerOrganizations/seller1org.trade.com/peers/peer1.seller1org.trade.com/msp:/etc/hyperledger/fabric/msp
-        - ../crypto-config/peerOrganizations/seller1org.trade.com/peers/peer1.seller1org.trade.com/tls:/etc/hyperledger/fabric/tls
+        - ../crypto-config/peerOrganizations/seller1org.trade.com/peers/peer0.seller1org.trade.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/seller1org.trade.com/peers/peer0.seller1org.trade.com/tls:/etc/hyperledger/fabric/tls
         - peer0.seller1org.trade.com:/var/hyperledger/production
     ports:
       - 8051:7051
@@ -107,7 +107,7 @@ services:
       - 9051:7051
       - 9053:7053
       - 9055:6060
-
+  
   peer0.buyer1org.trade.com:
     container_name: peer0.buyer1org.trade.com
     extends:

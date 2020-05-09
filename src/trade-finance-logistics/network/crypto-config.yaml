@@ -85,7 +85,7 @@ PeerOrgs:
   # ---------------------------------------------------------------------------
   # Seller1Org
   # ---------------------------------------------------------------------------
-  - Name: Seller1Org
+  - Name: Seller1rg
     Domain: seller1org.trade.com
     EnableNodeOUs: true
     Template:

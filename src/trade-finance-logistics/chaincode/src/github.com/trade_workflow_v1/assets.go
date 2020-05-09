@@ -24,17 +24,22 @@ type ItemEntry struct {
 	Warehouse          string  `json:"warehouse"`
 	Price              float64 `json:"price"`
 	Count              int     `json:"count"`
+	FeeToMiddleman	float64 `json:"feeToMiddleman"`
+	FeeToWarehouse	float64 `json:"feeToWarehouse"`
+	FeeToCarrier	float64 `json:"feeToCarrier"`
+	DocType	string	`json:"docType"`
 }
 type TradeAgreement struct {
 	Amount             int    `json:"amount"`
 	DescriptionOfGoods string `json:"descriptionOfGoods"`
 	Status             string `json:"status"`
 	Payment            int    `json:"payment"`
+	ItemId 	string `json:"itemId"`
 }
 type BillOfLading struct {
 	Id                 string `json:"id"`
 	Seller             string `json:"seller"`
-	ItemId 			   string `json:"ItemId"`
+	ItemId 			   string `json:"itemId"`
 	Amount             int    `json:"amount"`
 	Buyer              string `json:"buyer"`
 	Status 			   string `json:"status"`
