@@ -33,10 +33,10 @@ OrdererOrgs:
 # ---------------------------------------------------------------------------
 PeerOrgs:
   # ---------------------------------------------------------------------------
-  # Seller0Org
+  # SellerOrg
   # ---------------------------------------------------------------------------
-  - Name: Seller0Org
-    Domain: seller0org.trade.com
+  - Name: SellerOrg
+    Domain: sellerorg.trade.com
     EnableNodeOUs: true
     # ---------------------------------------------------------------------------
     # "Specs"
@@ -83,30 +83,10 @@ PeerOrgs:
     Users:
       Count: 2
   # ---------------------------------------------------------------------------
-  # Seller1Org
+  # BuyerOrg
   # ---------------------------------------------------------------------------
-  - Name: Seller1Org
-    Domain: seller1org.trade.com
-    EnableNodeOUs: true
-    Template:
-      Count: 1
-    Users:
-      Count: 2
-  # ---------------------------------------------------------------------------
-  # Buyer0Org
-  # ---------------------------------------------------------------------------
-  - Name: Buyer0Org
-    Domain: buyer0org.trade.com
-    EnableNodeOUs: true
-    Template:
-      Count: 1
-    Users:
-      Count: 2
-  # ---------------------------------------------------------------------------
-  # Buyer1Org
-  # ---------------------------------------------------------------------------
-  - Name: Buyer1Org
-    Domain: buyer1org.trade.com
+  - Name: BuyerOrg
+    Domain: buyerorg.trade.com
     EnableNodeOUs: true
     Template:
       Count: 1

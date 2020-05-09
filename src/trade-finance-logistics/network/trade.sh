@@ -260,7 +260,7 @@ function networkDown () {
 
   docker-compose -f $COMPOSE_FILE down --volumes
 
-  for PEER in peer0.seller0org.trade.com peer0.seller1org.trade.com peer0.buyer0org.trade.com peer0.buyer1.trade.com peer0.carrierorg.trade.com peer0.middlemanorg.trade.com peer0.warehouseorg.trade.com; do
+  for PEER in peer0.sellerorg.trade.com peer0.buyerorg.trade.com peer0.carrierorg.trade.com peer0.middlemanorg.trade.com peer0.warehouseorg.trade.com; do
     # Remove any old containers and images for this peer
     CC_CONTAINERS=$(docker ps -a | grep dev-$PEER | awk '{print $1}')
     if [ -n "$CC_CONTAINERS" ] ; then
@@ -330,22 +330,14 @@ function replacePrivateKey () {
     # actual values of the private key file names for the two CAs.
     if [ $(uname -s) == 'Darwin' ] ; then
       CURRENT_DIR=$PWD
-      cd crypto-config/peerOrganizations/seller0org.trade.com/ca/
+      cd crypto-config/peerOrganizations/sellerorg.trade.com/ca/
       PRIV_KEY=$(ls *_sk)
       cd "$CURRENT_DIR"
-      sed -i '' "s/SELLER0_CA_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-      cd crypto-config/peerOrganizations/seller1org.trade.com/ca/
+      sed -i '' "s/SELLER_CA_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+      cd crypto-config/peerOrganizations/buyerorg.trade.com/ca/
       PRIV_KEY=$(ls *_sk)
       cd "$CURRENT_DIR"
-      sed -i '' "s/SELLER1_CA_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-      cd crypto-config/peerOrganizations/buyer0org.trade.com/ca/
-      PRIV_KEY=$(ls *_sk)
-      cd "$CURRENT_DIR"
-      sed -i '' "s/BUYER0_CA_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-      cd crypto-config/peerOrganizations/buyer1org.trade.com/ca/
-      PRIV_KEY=$(ls *_sk)
-      cd "$CURRENT_DIR"
-      sed -i '' "s/BUYER1_CA_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+      sed -i '' "s/BUYER_CA_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
       cd crypto-config/peerOrganizations/carrierorg.trade.com/ca/
       PRIV_KEY=$(ls *_sk)
       cd "$CURRENT_DIR"
@@ -361,22 +353,14 @@ function replacePrivateKey () {
       sed -i '' "s/WAREHOUSE_CA_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
     else
       CURRENT_DIR=$PWD
-      cd crypto-config/peerOrganizations/seller0org.trade.com/ca/
+      cd crypto-config/peerOrganizations/sellerorg.trade.com/ca/
       PRIV_KEY=$(ls *_sk)
       cd "$CURRENT_DIR"
-      sed -i "s/SELLER0_CA_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-      cd crypto-config/peerOrganizations/seller1org.trade.com/ca/
+      sed -i "s/SELLER_CA_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+      cd crypto-config/peerOrganizations/buyerorg.trade.com/ca/
       PRIV_KEY=$(ls *_sk)
       cd "$CURRENT_DIR"
-      sed -i "s/SELLER1_CA_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-      cd crypto-config/peerOrganizations/buyer0org.trade.com/ca/
-      PRIV_KEY=$(ls *_sk)
-      cd "$CURRENT_DIR"
-      sed -i "s/BUYER0_CA_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-      cd crypto-config/peerOrganizations/buyer1org.trade.com/ca/
-      PRIV_KEY=$(ls *_sk)
-      cd "$CURRENT_DIR"
-      sed -i "s/BUYER1_CA_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+      sed -i "s/BUYER_CA_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
       cd crypto-config/peerOrganizations/carrierorg.trade.com/ca/
       PRIV_KEY=$(ls *_sk)
       cd "$CURRENT_DIR"
@@ -571,55 +555,28 @@ function generateChannelArtifacts() {
   if [ "$DEV_MODE" = false ] ; then
     echo
     echo "#####################################################################"
-    echo "#######  Generating anchor peer update for Seller0OrgMSP  ##########"
+    echo "#######  Generating anchor peer update for SellerOrgMSP  ##########"
     echo "#####################################################################"
     set -x
-    configtxgen -profile $CHANNEL_PROFILE -outputAnchorPeersUpdate ./channel-artifacts/Seller0OrgMSPanchors.tx -channelID $CHANNEL_NAME -asOrg Seller0OrgMSP
+    configtxgen -profile $CHANNEL_PROFILE -outputAnchorPeersUpdate ./channel-artifacts/SellerOrgMSPanchors.tx -channelID $CHANNEL_NAME -asOrg SellerOrgMSP
     res=$?
     set +x
     if [ $res -ne 0 ]; then
-      echo "Failed to generate anchor peer update for Seller0OrgMSP..."
+      echo "Failed to generate anchor peer update for SellerOrgMSP..."
       exit 1
     fi
 
     echo
     echo "#####################################################################"
-    echo "#######  Generating anchor peer update for Seller1OrgMSP  ##########"
-    echo "#####################################################################"
-    set -x
-    configtxgen -profile $CHANNEL_PROFILE -outputAnchorPeersUpdate ./channel-artifacts/Seller1OrgMSPanchors.tx -channelID $CHANNEL_NAME -asOrg Seller1OrgMSP
-    res=$?
-    set +x
-    if [ $res -ne 0 ]; then
-      echo "Failed to generate anchor peer update for Seller1OrgMSP..."
-      exit 1
-    fi
-
-    echo
-    echo "#####################################################################"
-    echo "#######  Generating anchor peer update for Buyer0OrgMSP  ##########"
+    echo "#######  Generating anchor peer update for BuyerOrgMSP  ##########"
     echo "#####################################################################"
     set -x
     configtxgen -profile $CHANNEL_PROFILE -outputAnchorPeersUpdate \
-    ./channel-artifacts/Buyer0OrgMSPanchors.tx -channelID $CHANNEL_NAME -asOrg Buyer0OrgMSP -channelID $CHANNEL_NAME
+    ./channel-artifacts/BuyerOrgMSPanchors.tx -channelID $CHANNEL_NAME -asOrg BuyerOrgMSP -channelID $CHANNEL_NAME
     res=$?
     set +x
     if [ $res -ne 0 ]; then
-      echo "Failed to generate anchor peer update for Buyer0OrgMSP..."
-      exit 1
-    fi
-
-    echo
-    echo "#####################################################################"
-    echo "#######  Generating anchor peer update for Buyer1OrgMSP  ##########"
-    echo "#####################################################################"
-    set -x
-    configtxgen -profile $CHANNEL_PROFILE -outputAnchorPeersUpdate \
-    ./channel-artifacts/Buyer1OrgMSPanchors.tx -channelID $CHANNEL_NAME -asOrg Buyer1OrgMSP -channelID $CHANNEL_NAME
-    res=$?
-    set +x
-    if [ $res -ne 0 ]; then
-      echo "Failed to generate anchor peer update for Buyer1OrgMSP..."
+      echo "Failed to generate anchor peer update for BuyerOrgMSP..."
       exit 1
     fi
 
