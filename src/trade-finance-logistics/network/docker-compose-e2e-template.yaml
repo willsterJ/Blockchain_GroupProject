@@ -18,8 +18,10 @@ version: '2'
 
 volumes:
   orderer.trade.com:
-  peer0.sellerorg.trade.com:
-  peer0.buyerorg.trade.com:
+  peer0.seller0org.trade.com:
+  peer0.seller1org.trade.com:
+  peer0.buyer0org.trade.com:
+  peer0.buyer1org.trade.com:
   peer0.carrierorg.trade.com:
   peer0.middlemanorg.trade.com:
   peer0.warehouseorg.trade.com:
@@ -27,37 +29,71 @@ volumes:
 networks:
   trade:
 services:
-  seller-ca:
+  seller0-ca:
     image: hyperledger/fabric-ca:$IMAGE_TAG
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=ca-sellerorg
+      - FABRIC_CA_SERVER_CA_NAME=ca-seller0org
       - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.sellerorg.trade.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/SELLER_CA_PRIVATE_KEY
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.seller0org.trade.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/SELLER0_CA_PRIVATE_KEY
     ports:
       - "7054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.sellerorg.trade.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/SELLER_CA_PRIVATE_KEY -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.seller0org.trade.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/SELLER0_CA_PRIVATE_KEY -b admin:adminpw -d'
     volumes:
-      - ./crypto-config/peerOrganizations/sellerorg.trade.com/ca/:/etc/hyperledger/fabric-ca-server-config
-    container_name: ca_peerSellerOrg
+      - ./crypto-config/peerOrganizations/seller0org.trade.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerSeller0Org
     networks:
       - trade
 
-  buyer-ca:
+  seller1-ca:
     image: hyperledger/fabric-ca:$IMAGE_TAG
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=ca-buyerorg
+      - FABRIC_CA_SERVER_CA_NAME=ca-seller1org
       - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.buyerorg.trade.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/BUYER_CA_PRIVATE_KEY
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.seller1org.trade.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/SELLER1_CA_PRIVATE_KEY
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.seller1org.trade.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/SELLER1_CA_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/seller1org.trade.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerSeller1Org
+    networks:
+      - trade
+
+  buyer0-ca:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-buyer0org
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.buyer0org.trade.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/BUYER0_CA_PRIVATE_KEY
     ports:
       - "8054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.buyerorg.trade.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/BUYER_CA_PRIVATE_KEY -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.buyer0org.trade.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/BUYER0_CA_PRIVATE_KEY -b admin:adminpw -d'
     volumes:
-      - ./crypto-config/peerOrganizations/buyerorg.trade.com/ca/:/etc/hyperledger/fabric-ca-server-config
-    container_name: ca_peerBuyerOrg
+      - ./crypto-config/peerOrganizations/buyer0org.trade.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerBuyer0Org
+    networks:
+      - trade
+
+  buyer1-ca:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-buyer1org
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.buyer1org.trade.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/BUYER1_CA_PRIVATE_KEY
+    ports:
+      - "8054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.buyer1org.trade.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/BUYER1_CA_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/buyer1org.trade.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerBuyer1Org
     networks:
       - trade
 
@@ -120,19 +156,35 @@ services:
     networks:
       - trade
 
-  peer0.sellerorg.trade.com:
-    container_name: peer0.sellerorg.trade.com
+  peer0.seller0org.trade.com:
+    container_name: peer0.seller0org.trade.com
     extends:
       file:  base/docker-compose-base.yaml
-      service: peer0.sellerorg.trade.com
+      service: peer0.seller0org.trade.com
     networks:
       - trade
 
-  peer0.buyerorg.trade.com:
-    container_name: peer0.buyerorg.trade.com
+  peer0.seller1org.trade.com:
+    container_name: peer0.seller1org.trade.com
     extends:
       file:  base/docker-compose-base.yaml
-      service: peer0.buyerorg.trade.com
+      service: peer0.seller1org.trade.com
+    networks:
+      - trade
+
+  peer0.buyer0org.trade.com:
+    container_name: peer0.buyer0org.trade.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.buyer0org.trade.com
+    networks:
+      - trade
+
+  peer0.buyer1org.trade.com:
+    container_name: peer0.buyer1org.trade.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.buyer1org.trade.com
     networks:
       - trade
 

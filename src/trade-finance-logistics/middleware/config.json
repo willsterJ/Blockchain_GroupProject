@@ -6,32 +6,60 @@
 		"server-hostname": "orderer.trade.com",
 		"tls_cacerts": "../network/crypto-config/ordererOrganizations/trade.com/orderers/orderer.trade.com/msp/tlscacerts/tlsca.trade.com-cert.pem"
 	  },
-	  "sellerorg": {
-		"name": "peerSellerOrg",
-		"mspid": "SellerOrgMSP",
+	  "seller0org": {
+		"name": "peerSeller0Org",
+		"mspid": "Seller0OrgMSP",
 		"ca": {
 		  "url": "https://localhost:7054",
-		  "name": "ca-sellerorg"
+		  "name": "ca-seller0org"
 		},
 		"peer1": {
 		  "requests": "grpcs://localhost:7051",
 		  "events": "grpcs://localhost:7053",
-		  "server-hostname": "peer0.sellerorg.trade.com",
-		  "tls_cacerts": "../network/crypto-config/peerOrganizations/sellerorg.trade.com/peers/peer0.sellerorg.trade.com/msp/tlscacerts/tlsca.sellerorg.trade.com-cert.pem"
+		  "server-hostname": "peer0.seller0org.trade.com",
+		  "tls_cacerts": "../network/crypto-config/peerOrganizations/seller0org.trade.com/peers/peer0.seller0org.trade.com/msp/tlscacerts/tlsca.seller0org.trade.com-cert.pem"
 		}
 	  },
-	  "buyerorg": {
-		"name": "peerBuyerOrg",
-		"mspid": "BuyerOrgMSP",
+	  "seller1org": {
+		"name": "peerSeller1Org",
+		"mspid": "Seller1OrgMSP",
+		"ca": {
+		  "url": "https://localhost:7054",
+		  "name": "ca-seller1org"
+		},
+		"peer1": {
+		  "requests": "grpcs://localhost:7051",
+		  "events": "grpcs://localhost:7053",
+		  "server-hostname": "peer0.seller1org.trade.com",
+		  "tls_cacerts": "../network/crypto-config/peerOrganizations/seller1org.trade.com/peers/peer0.seller1org.trade.com/msp/tlscacerts/tlsca.seller0org.trade.com-cert.pem"
+		}
+	  },
+	  "buyer0org": {
+		"name": "peerBuyer0Org",
+		"mspid": "Buyer0OrgMSP",
 		"ca": {
 		  "url": "https://localhost:8054",
-		  "name": "ca-buyerorg"
+		  "name": "ca-buyer0org"
 		},
 		"peer1": {
 		  "requests": "grpcs://localhost:8051",
 		  "events": "grpcs://localhost:8053",
-		  "server-hostname": "peer0.buyerorg.trade.com",
-		  "tls_cacerts": "../network/crypto-config/peerOrganizations/buyerorg.trade.com/peers/peer0.buyerorg.trade.com/msp/tlscacerts/tlsca.buyerorg.trade.com-cert.pem"
+		  "server-hostname": "peer0.buyer0org.trade.com",
+		  "tls_cacerts": "../network/crypto-config/peerOrganizations/buyer0org.trade.com/peers/peer0.buyer0org.trade.com/msp/tlscacerts/tlsca.buyer0org.trade.com-cert.pem"
+		}
+	  },
+	  "buyer1org": {
+		"name": "peerBuyer1Org",
+		"mspid": "Buyer1OrgMSP",
+		"ca": {
+		  "url": "https://localhost:8054",
+		  "name": "ca-buyer1org"
+		},
+		"peer1": {
+		  "requests": "grpcs://localhost:8051",
+		  "events": "grpcs://localhost:8053",
+		  "server-hostname": "peer0.buyer1org.trade.com",
+		  "tls_cacerts": "../network/crypto-config/peerOrganizations/buyer1org.trade.com/peers/peer0.buyer1org.trade.com/msp/tlscacerts/tlsca.buyer1org.trade.com-cert.pem"
 		}
 	  },
 	  "carrierorg": {
