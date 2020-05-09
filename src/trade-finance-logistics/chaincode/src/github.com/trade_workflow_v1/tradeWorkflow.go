@@ -163,6 +163,10 @@ func (t *TradeWorkflowChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Res
 		return t.acceptStorage(stub, creatorOrg, creatorCertIssuer, args)
 	} else if function == "prepareShipment" {
 		return t.prepareShipment(stub, creatorOrg, creatorCertIssuer, args)
+	} else if function == "deliverShipment" {
+		return t.deliverShipment(stub, creatorOrg, creatorCertIssuer, args)
+	} else if function == "getShipmentStatus" {
+		return t.getShipmentStatus(stub, creatorOrg, creatorCertIssuer, args)
 	}
 
 	return shim.Error("Invalid invoke function name")
@@ -1404,7 +1408,7 @@ func (t *TradeWorkflowChaincode) prepareShipment(stub shim.ChaincodeStubInterfac
 	var err error
 
 	if !t.testMode && !authenticateCarrierOrg(creatorOrg, creatorCertIssuer) {
-		return shim.Error("Caller not a member of Ccarrier Org. Access denied.")
+		return shim.Error("Caller not a member of Carrier Org. Access denied.")
 	}
 
 	if len(args) != 5 {
@@ -1436,6 +1440,98 @@ func (t *TradeWorkflowChaincode) prepareShipment(stub shim.ChaincodeStubInterfac
 	}
 
 	fmt.Printf("Preparing shipment %s of item %s for buyer %s", args[0], args[2], args[4])
+	return shim.Success(nil)
+}
+
+func (t *TradeWorkflowChaincode) deliverShipment(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
+	var billOfLading *BillOfLading
+	var billOfLadingBytes []byte
+	var billOfLadingKey string
+	var err error
+	if !t.testMode && !authenticateCarrierOrg(creatorOrg, creatorCertIssuer) {
+		return shim.Error("Caller not a member of Carrier Org. Access denied.")
+	}
+
+	if len(args) != 1 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 1: {ID}. Found %d", len(args)))
+		return shim.Error(err.Error())
+	}
+
+	// Get the state from the ledger
+	billOfLadingKey, err = getTradeKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	billOfLadingBytes, err = stub.GetState(billOfLadingKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	if len(billOfLadingBytes) == 0 {
+		err = errors.New(fmt.Sprintf("No record found for trade ID %s", args[0]))
+		return shim.Error(err.Error())
+	}
+
+	// Unmarshal the JSON
+	err = json.Unmarshal(billOfLadingBytes, &billOfLading)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	if billOfLading.Status == DELIVERED {
+		fmt.Printf("Shipment %s already delivered", args[0])
+	} else {
+		billOfLading.Status = DELIVERED
+		billOfLadingBytes, err = json.Marshal(billOfLading)
+		if err != nil {
+			return shim.Error("Error marshaling B/L structure")
+		}
+		// Write the state to the ledger
+		err = stub.PutState(billOfLadingKey, billOfLadingBytes)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+	}
+	fmt.Printf("Delivering shipment %s", args[0])
+	return shim.Success(nil)
+}
+
+func (t *TradeWorkflowChaincode) getShipmentStatus(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
+	var billOfLading *BillOfLading
+	var billOfLadingBytes []byte
+	var billOfLadingKey string
+	var err error
+
+	if !t.testMode && !authenticateBuyerOrg(creatorOrg, creatorCertIssuer) {
+		return shim.Error("Caller not a member of Buyer Org. Access denied.")
+	}
+
+	if len(args) != 1 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 1: {ID}. Found %d", len(args)))
+		return shim.Error(err.Error())
+	}
+	// Get the state from the ledger
+	billOfLadingKey, err = getTradeKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	billOfLadingBytes, err = stub.GetState(billOfLadingKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	if len(billOfLadingBytes) == 0 {
+		err = errors.New(fmt.Sprintf("No record found for trade ID %s", args[0]))
+		return shim.Error(err.Error())
+	}
+
+	// Unmarshal the JSON
+	err = json.Unmarshal(billOfLadingBytes, &billOfLading)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	fmt.Printf("Shipment %s is %s", args[0], billOfLading.Status)
 	return shim.Success(nil)
 }
 
