@@ -34,11 +34,12 @@ type TradeAgreement struct {
 	DescriptionOfGoods string `json:"descriptionOfGoods"`
 	Status             string `json:"status"`
 	Payment            int    `json:"payment"`
+	ItemId 	string `json:"itemId"`
 }
 type BillOfLading struct {
 	Id                 string `json:"id"`
 	Seller             string `json:"seller"`
-	ItemId 			   string `json:"ItemId"`
+	ItemId 			   string `json:"itemId"`
 	Amount             int    `json:"amount"`
 	Buyer              string `json:"buyer"`
 	Status 			   string `json:"status"`

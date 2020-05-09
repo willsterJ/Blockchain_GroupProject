@@ -220,7 +220,7 @@ func (t *TradeWorkflowChaincode) initItem(stub shim.ChaincodeStubInterface, crea
 		return shim.Error("This item already exists: " + itemId + " , name:" + itemName)
 	}
 	// Create item object and marshal to JSON  // TODO change creatorOrg to something unique!
-	itemEntry = &ItemEntry{itemId, itemName, creatorOrg, "", "", price, count, 0, 0, 0, "itemEntry"}
+	itemEntry = &ItemEntry{itemId, itemName, creatorOrg, "", "", price, count, 0, 0, 0.05, "itemEntry"}
 	itemEntryBytes, err = json.Marshal(itemEntry)
 	if err != nil {
 		return shim.Error("Error marshaling ItemEntry structure")
@@ -397,7 +397,7 @@ func (t *TradeWorkflowChaincode) requestTrade(stub shim.ChaincodeStubInterface, 
 		return shim.Error(err.Error())
 	}
 
-	tradeAgreement = &TradeAgreement{amount, args[2], REQUESTED, 0}
+	tradeAgreement = &TradeAgreement{amount, args[2], REQUESTED, 0, ""}
 	tradeAgreementBytes, err = json.Marshal(tradeAgreement)
 	if err != nil {
 		return shim.Error("Error marshaling trade agreement structure")
@@ -502,6 +502,7 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 			fmt.Printf("Trade %s cannot be accepted. No items matching specifications exist\n", args[0])
 		} else{
 			tradeAgreement.Status = ACCEPTED
+			tradeAgreement.ItemId = min_key
 			tradeAgreementBytes, err = json.Marshal(tradeAgreement)
 			if err != nil {
 				return shim.Error("Error marshaling trade agreement structure")
@@ -624,10 +625,11 @@ func (t *TradeWorkflowChaincode) requestPayment(stub shim.ChaincodeStubInterface
 
 // Make a payment
 func (t *TradeWorkflowChaincode) makePayment(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
-	var paymentKey, tradeKey string
+	var paymentKey, tradeKey, itemId string
 	var paymentAmount, midBal, buyBal, selBal, carBal, warBal float64
-	var paymentBytes, tradeAgreementBytes, buyBalBytes, midBalBytes, selBalBytes, carBalBytes, warBalBytes []byte
+	var paymentBytes, tradeAgreementBytes, itemEntryBytes,buyBalBytes, midBalBytes, selBalBytes, carBalBytes, warBalBytes []byte
 	var tradeAgreement *TradeAgreement
+	var itemEntry *ItemEntry
 	var err error
 
 	// Access control: Only an Importer Org member can invoke this transaction
@@ -676,22 +678,6 @@ func (t *TradeWorkflowChaincode) makePayment(stub shim.ChaincodeStubInterface, c
 		return shim.Error(err.Error())
 	}
 
-	// Lookup shipment location from the ledger
-	// shipmentLocationKey, err = getShipmentLocationKey(stub, args[0])
-	// if err != nil {
-	// 	return shim.Error(err.Error())
-	// }
-
-	// shipmentLocationBytes, err = stub.GetState(shipmentLocationKey)
-	// if err != nil {
-	// 	return shim.Error(err.Error())
-	// }
-
-	// if len(shipmentLocationBytes) == 0 {
-	// 	fmt.Printf("Shipment for trade %s has not been prepared yet", args[0])
-	// 	return shim.Error("Shipment not prepared yet")
-	// }
-
 	// Lookup account balances
 	midBalBytes, err = stub.GetState(midBalKey)
 	if err != nil {
@@ -734,18 +720,24 @@ func (t *TradeWorkflowChaincode) makePayment(stub shim.ChaincodeStubInterface, c
 		return shim.Error(err.Error())
 	}
 
-	// Record transfer of funds
-	// if string(shipmentLocationBytes) == SOURCE {
-	// 	paymentAmount = tradeAgreement.Amount/2
-	// } else {
-	// 	paymentAmount = tradeAgreement.Amount - tradeAgreement.Payment
-	// }
-	var midRate, selRate, warRate, carRate float64
-	midRate = 0.1
-	selRate = 0.85
-	warRate = 0.025
-	carRate = 0.025
-	paymentAmount = float64(tradeAgreement.Amount)
+	// extract the rates from item entry
+	itemId = tradeAgreement.ItemId
+	itemEntryBytes, err = stub.GetState(itemId)
+	if err != nil {
+		return shim.Error("Failed to get item:" + err.Error())
+	} else if itemEntryBytes == nil {
+		return shim.Error("Item does not exist")
+	}
+	err = json.Unmarshal(itemEntryBytes, &itemEntry)
+
+	// assign respective rates to each org
+	var midRate, warRate, carRate, selRate float64
+	midRate = itemEntry.FeeToMiddleman
+	warRate = itemEntry.FeeToWarehouse
+	carRate = itemEntry.FeeToCarrier
+	selRate = 1 - (midRate + warRate + carRate)
+
+	paymentAmount = float64(tradeAgreement.Amount) * float64(itemEntry.Price)
 	tradeAgreement.Payment += int(paymentAmount)
 	midBal += paymentAmount * midRate
 	selBal += paymentAmount * selRate
@@ -1212,7 +1204,7 @@ func (t *TradeWorkflowChaincode) acceptStorage(stub shim.ChaincodeStubInterface,
 	}
 
 	if contract.Status == ACCEPTED {
-		fmt.Printf("Storage Contract %s already accepted", args[0])
+		fmt.Printf("Storage Contract %s already accepted\n", args[0])
 	} else {
 		contract.Status = ACCEPTED
 		contractBytes, err = json.Marshal(contract)
@@ -1298,7 +1290,7 @@ func (t *TradeWorkflowChaincode) prepareShipment(stub shim.ChaincodeStubInterfac
 
 	// Assign carrier fee to item
 	itemId = args[2]
-	itemEntryBytes, err = GetState(itemId)
+	itemEntryBytes, err = stub.GetState(itemId)
 	if err != nil {
 		return shim.Error("Failed to get item entry:" + err.Error())
 	}
@@ -1312,7 +1304,7 @@ func (t *TradeWorkflowChaincode) prepareShipment(stub shim.ChaincodeStubInterfac
 		return shim.Error(err.Error())
 	}
 
-	fmt.Printf("Preparing shipment %s of item %s for buyer %s", args[0], args[2], args[4])
+	fmt.Printf("Preparing shipment %s of item %s for buyer %s\n", args[0], args[2], args[4])
 	return shim.Success(nil)
 }
 
@@ -1352,7 +1344,7 @@ func (t *TradeWorkflowChaincode) deliverShipment(stub shim.ChaincodeStubInterfac
 	}
 
 	if billOfLading.Status == DELIVERED {
-		fmt.Printf("Shipment %s already delivered", args[0])
+		fmt.Printf("Shipment %s already delivered\n", args[0])
 	} else {
 		billOfLading.Status = DELIVERED
 		billOfLadingBytes, err = json.Marshal(billOfLading)
@@ -1365,7 +1357,7 @@ func (t *TradeWorkflowChaincode) deliverShipment(stub shim.ChaincodeStubInterfac
 			return shim.Error(err.Error())
 		}
 	}
-	fmt.Printf("Delivering shipment %s", args[0])
+	fmt.Printf("Delivering shipment %s\n", args[0])
 	return shim.Success(nil)
 }
 
@@ -1404,7 +1396,7 @@ func (t *TradeWorkflowChaincode) getShipmentStatus(stub shim.ChaincodeStubInterf
 		return shim.Error(err.Error())
 	}
 
-	fmt.Printf("Shipment %s is %s", args[0], billOfLading.Status)
+	fmt.Printf("Shipment %s is %s\n", args[0], billOfLading.Status)
 	return shim.Success(nil)
 }
 
@@ -1413,6 +1405,6 @@ func main() {
 	twc.testMode = true
 	err := shim.Start(twc)
 	if err != nil {
-		fmt.Printf("Error starting Trade Workflow chaincode: %s", err)
+		fmt.Printf("Error starting Trade Workflow chaincode: %s\n", err)
 	}
 }
