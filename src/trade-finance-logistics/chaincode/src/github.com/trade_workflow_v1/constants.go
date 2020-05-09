@@ -36,6 +36,7 @@ const (
 	ISSUED		= "ISSUED"
 	ACCEPTED	= "ACCEPTED"
 	PREPARED	= "PREPARED"
+	DELIVERED 	= "DELIVERED"
 )
 
 // Location values
