@@ -69,7 +69,7 @@ node createTradeApp.js
 
 echo -e "\nNow launching runTradeScenarioApp.js "
 
-node runTradeScenarioApp.js
+# node runTradeScenarioApp.js
 
 # echo -e "\nNow invoking ../network/.trade.sh createneworg"
 
