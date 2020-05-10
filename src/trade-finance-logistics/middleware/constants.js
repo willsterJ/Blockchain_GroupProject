@@ -51,17 +51,17 @@ var FOUR_ORG_MEMBERS_AND_ADMIN = [{
 var FIVE_ORG_MEMBERS_AND_ADMIN = [{
 	role: {
 		name: 'member',
-		mspId: 'ExporterOrgMSP'
+		mspId: 'SellerOrgMSP'
 	}
 }, {
 	role: {
 		name: 'member',
-		mspId: 'ExportingEntityOrgMSP'
+		mspId: 'BuyerOrgMSP'
 	}
 }, {
 	role: {
 		name: 'member',
-		mspId: 'ImporterOrgMSP'
+		mspId: 'MiddlemanOrgMSP'
 	}
 }, {
 	role: {
@@ -71,7 +71,7 @@ var FIVE_ORG_MEMBERS_AND_ADMIN = [{
 }, {
 	role: {
 		name: 'member',
-		mspId: 'RegulatorOrgMSP'
+		mspId: 'WarehouseOrgMSP'
 	}
 }, {
 	role: {
@@ -114,6 +114,11 @@ var SEVEN_ORG_MEMBERS_AND_ADMIN = [{
 	role: {
 		name: 'member',
 		mspId: 'WarehouseOrgMSP'
+	}
+}, {
+	role: {
+		name: 'admin',
+		mspId: 'TradeOrdererMSP'
 	}
 }];
 
@@ -169,20 +174,20 @@ var networkLocation = '../network';
 
 var channelConfig = 'channel-artifacts/channel.tx';
 
-var IMPORTER_ORG = 'importerorg';
-var EXPORTER_ORG = 'exporterorg';
-var EXPORTING_ENTITY_ORG = 'exportingentityorg';
+var BUYER_ORG = 'buyerorg';
+var SELLER_ORG = 'sellerorg';
+var MIDDLEMAN_ORG = 'middlemanorg';
 var CARRIER_ORG = 'carrierorg';
-var REGULATOR_ORG = 'regulatororg';
+var WAREHOUSE_ORG = 'warehouseorg';
 
 var CHANNEL_NAME = 'tradechannel';
-var CHAINCODE_PATH = 'github.com/trade_workflow';
+var CHAINCODE_PATH = 'github.com/trade_workflow'; // Unsure if we should change?
 var CHAINCODE_ID = 'tradecc';
 var CHAINCODE_VERSION = 'v0';
 var CHAINCODE_UPGRADE_PATH = 'github.com/trade_workflow_v1';
 var CHAINCODE_UPGRADE_VERSION = 'v1';
 
-var TRANSACTION_ENDORSEMENT_POLICY = ALL_FOUR_ORG_MEMBERS;
+var TRANSACTION_ENDORSEMENT_POLICY = ALL_FOUR_ORG_MEMBERS; //Need to change eventually
 
 module.exports = {
 	tempdir: tempdir,
@@ -191,11 +196,11 @@ module.exports = {
 	networkConfig: networkConfig,
 	networkLocation: networkLocation,
 	channelConfig: channelConfig,
-	IMPORTER_ORG: IMPORTER_ORG,
-	EXPORTER_ORG: EXPORTER_ORG,
-	EXPORTING_ENTITY_ORG: EXPORTING_ENTITY_ORG,
+	BUYER_ORG: BUYER_ORG,
+	SELLER_ORG: SELLER_ORG,
+	MIDDLEMAN_ORG: MIDDLEMAN_ORG,
 	CARRIER_ORG: CARRIER_ORG,
-	REGULATOR_ORG: REGULATOR_ORG,
+	WAREHOUSE_ORG: WAREHOUSE_ORG,
 	CHANNEL_NAME: CHANNEL_NAME,
 	CHAINCODE_PATH: CHAINCODE_PATH,
 	CHAINCODE_ID: CHAINCODE_ID,
