@@ -80,6 +80,43 @@ var FIVE_ORG_MEMBERS_AND_ADMIN = [{
 	}
 }];
 
+var SEVEN_ORG_MEMBERS_AND_ADMIN = [{
+	role: {
+		name: 'member',
+		mspId: 'Seller0OrgMSP'
+	}
+}, {
+	role: {
+		name: 'member',
+		mspId: 'Seller1OrgMSP'
+	}
+}, {
+	role: {
+		name: 'member',
+		mspId: 'Buyer0OrgMSP'
+	}
+}, {
+	role: {
+		name: 'member',
+		mspId: 'Buyer1OrgMSP'
+	}
+}, {
+	role: {
+		name: 'member',
+		mspId: 'Middleman'
+	}
+}, {
+	role: {
+		name: 'member',
+		mspId: 'CarrierOrgMSP'
+	}
+}, {
+	role: {
+		name: 'member',
+		mspId: 'WarehouseOrgMSP'
+	}
+}];
+
 var ONE_OF_FOUR_ORG_MEMBER = {
 	identities: FOUR_ORG_MEMBERS_AND_ADMIN,
 	policy: {
@@ -105,6 +142,13 @@ var ALL_ORGS_EXCEPT_REGULATOR = {
 	identities: FOUR_ORG_MEMBERS_AND_ADMIN,
 	policy: {
 		'3-of': [{ 'signed-by': 0 }, { 'signed-by': 1 }, { 'signed-by': 2 }]
+	}
+};
+
+var ALL_SEVEN_ORG_MEMBERS = {
+	identities: SEVEN_ORG_MEMBERS_AND_ADMIN,
+	policy: {
+		'7-of': [{ 'signed-by': 0 }, { 'signed-by': 1 }, { 'signed-by': 2 }, { 'signed-by': 3 }, { 'signed-by': 4 }, { 'signed-by': 5 }, { 'signed-by': 6 }]
 	}
 };
 
