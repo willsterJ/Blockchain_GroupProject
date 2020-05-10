@@ -25,6 +25,8 @@ var instantiateCC = require('./instantiate-chaincode.js');
 var invokeCC = require('./invoke-chaincode.js');
 var queryCC = require('./query-chaincode.js');
 
+// All the commands below set up the chaincode for the scenario, so we need to change
+// so that it runs our scenario with singlecopyorg.
 
 // Create a channel using the given network configuration
 createChannel.createChannel(Constants.CHANNEL_NAME).then(() => {
