@@ -40,7 +40,7 @@ invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'ini
 	console.log('\n');
 
 	// QUERY: queryItems (Seller)
-	return queryCC.queryChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'queryItems', ["{\"selector\":{\"descriptionOfGoods\":\"laptop\"}}"], 'Seller');
+	return invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'queryItems', ["{\"selector\":{\"descriptionOfGoods\":\"laptop\"}}"], 'Seller');
 }, (err) => {
 	console.log('\n');
 	console.log('-----------------------------');
