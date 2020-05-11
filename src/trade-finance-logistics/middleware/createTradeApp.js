@@ -95,7 +95,7 @@ createChannel.createChannel(Constants.CHANNEL_NAME).then(() => {
 	console.log('\n');
 	ClientUtils.txEventsCleanup();
 
-	return invokeCC.invokeChaincode(Constants.BUYER_ORG, Constants.CHAINCODE_VERSION, 'requestTrade', ["trade1", "1","laptop"], 'Buyer');
+	return invokeCC.invokeChaincode(Constants.BUYER_ORG, Constants.CHAINCODE_VERSION, 'requestTrade', ["trade0", "1","test"], 'Buyer');
 }, (err) => {
 	console.log('\n');
 	console.log('------------------------------');
@@ -112,7 +112,7 @@ createChannel.createChannel(Constants.CHANNEL_NAME).then(() => {
 	console.log('------------------------------');
 	console.log('\n');
 
-	return queryCC.queryChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'getTradeStatus', ['trade1'], 'Seller');
+	return queryCC.queryChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'getTradeStatus', ['trade0'], 'Seller');
 }, (err) => {
 	console.log('\n');
 	console.log('-----------------------------');
