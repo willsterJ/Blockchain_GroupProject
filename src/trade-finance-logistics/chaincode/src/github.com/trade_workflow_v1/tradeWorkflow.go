@@ -377,19 +377,19 @@ func (t *TradeWorkflowChaincode) requestTrade(stub shim.ChaincodeStubInterface, 
 		return shim.Error(err.Error())
 	}
 
-	// check if trade agreement already exists
-	tradeKey, err = getTradeKey(stub, args[0])
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	tradeAgreementBytes, err = stub.GetState(tradeKey)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	if len(tradeAgreementBytes) != 0 {
-		err = errors.New(fmt.Sprintf("Trade request already found for trade ID %s", args[0]))
-		return shim.Error(err.Error())
-	}
+	// // check if trade agreement already exists
+	// tradeKey, err = getTradeKey(stub, args[0])
+	// if err != nil {
+	// 	return shim.Error(err.Error())
+	// }
+	// tradeAgreementBytes, err = stub.GetState(tradeKey)
+	// if err != nil {
+	// 	return shim.Error(err.Error())
+	// }
+	// if len(tradeAgreementBytes) != 0 {
+	// 	err = errors.New(fmt.Sprintf("Trade request already found for trade ID %s", args[0]))
+	// 	return shim.Error(err.Error())
+	// }
 
 	// now add trade request to ledger
 	amount, err = strconv.Atoi(string(args[1]))

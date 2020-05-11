@@ -181,13 +181,13 @@ var CARRIER_ORG = 'carrierorg';
 var WAREHOUSE_ORG = 'warehouseorg';
 
 var CHANNEL_NAME = 'tradechannel';
-var CHAINCODE_PATH = 'github.com/trade_workflow'; // Unsure if we should change?
+var CHAINCODE_PATH = 'github.com/trade_workflow_v1'; // Unsure if we should change?
 var CHAINCODE_ID = 'tradecc';
-var CHAINCODE_VERSION = 'v0';
+var CHAINCODE_VERSION = 'v1'; // here as well
 var CHAINCODE_UPGRADE_PATH = 'github.com/trade_workflow_v1';
 var CHAINCODE_UPGRADE_VERSION = 'v1';
 
-var TRANSACTION_ENDORSEMENT_POLICY = ALL_FOUR_ORG_MEMBERS; //Need to change eventually
+var TRANSACTION_ENDORSEMENT_POLICY = ALL_FIVE_ORG_MEMBERS; //Need to change eventually
 
 module.exports = {
 	tempdir: tempdir,
