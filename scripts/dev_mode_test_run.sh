@@ -90,9 +90,9 @@ sleep 2
 export CORE_PEER_MSPCONFIGPATH=/root/.fabric-ca-client/buyer0
 peer chaincode invoke -n tw -c '{"Args": ["makePayment", "trade-1"]}' -C tradechannel
 sleep 2
-peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-1","Buyer0OrgMSP"]}' -C tradechannel
+peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-1","buyer0"]}' -C tradechannel
 sleep 2
-peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-1", "Seller0OrgMSP"]}' -C tradechannel
+peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-1", "seller0"]}' -C tradechannel
 sleep 2
 peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-1", "middleman"]}' -C tradechannel
 sleep 2
@@ -102,9 +102,9 @@ peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-1", "wareh
 sleep 2
 peer chaincode invoke -n tw -c '{"Args": ["makePayment", "trade-2"]}' -C tradechannel
 sleep 2
-peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-2", "Buyer0OrgMSP"]}' -C tradechannel
+peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-2", "buyer0"]}' -C tradechannel
 sleep 2
-peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-2", "Seller1OrgMSP"]}' -C tradechannel
+peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-2", "seller1"]}' -C tradechannel
 sleep 2
 peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-2", "middleman"]}' -C tradechannel
 sleep 2
@@ -116,9 +116,9 @@ sleep 2
 export CORE_PEER_MSPCONFIGPATH=/root/.fabric-ca-client/buyer1
 peer chaincode invoke -n tw -c '{"Args": ["makePayment", "trade-3"]}' -C tradechannel
 sleep 2
-peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-3", "Buyer1OrgMSP"]}' -C tradechannel
+peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-3", "buyer1"]}' -C tradechannel
 sleep 2
-peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-3", "Seller0OrgMSP"]}' -C tradechannel
+peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-3", "seller0"]}' -C tradechannel
 sleep 2
 peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-3", "middleman"]}' -C tradechannel
 sleep 2
@@ -128,9 +128,9 @@ peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-3", "wareh
 sleep 2
 peer chaincode invoke -n tw -c '{"Args": ["makePayment", "trade-4"]}' -C tradechannel
 sleep 2
-peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-4", "Buyer1OrgMSP"]}' -C tradechannel
+peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-4", "buyer1"]}' -C tradechannel
 sleep 2
-peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-4", "Seller1OrgMSP"]}' -C tradechannel
+peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-4", "seller1"]}' -C tradechannel
 sleep 2
 peer chaincode invoke -n tw -c '{"Args": ["getAccountBalance", "trade-4", "middleman"]}' -C tradechannel
 sleep 2
