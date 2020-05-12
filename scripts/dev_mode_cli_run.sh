@@ -37,9 +37,9 @@ sleep 2
 export CORE_PEER_MSPCONFIGPATH=/root/.fabric-ca-client/carrier
 peer chaincode invoke -n tw -c '{"Args":["prepareShipment","ship-1","seller", "sellerlaptop", "1", "buyer"]}' -C tradechannel
 sleep 2
+export CORE_PEER_MSPCONFIGPATH=/root/.fabric-ca-client/buyer
 peer chaincode invoke -n tw -c '{"Args": ["getShipmentStatus","ship-1"]}' -C tradechannel
 sleep 2
-export CORE_PEER_MSPCONFIGPATH=/root/.fabric-ca-client/buyer
 peer chaincode invoke -n tw -c '{"Args":["deliverShipment", "ship-1"]}' -C tradechannel
 sleep 2
 export CORE_PEER_MSPCONFIGPATH=/root/.fabric-ca-client/carrier

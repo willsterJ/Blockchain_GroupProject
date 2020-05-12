@@ -1,6 +1,7 @@
 cd $GOPATH/src/trade-finance-logistics/network/
 
 echo -e "\nNow bringing the network down and back up again\n"
+echo "Y" | ./trade.sh down
 echo "Y" | ./trade.sh down -d true
 echo -e "\nThere may be 'orphans' relating to exportingEntityOrg', so doing another sweep of the containers"
 CONTAINER_IDS=$(docker ps -aq)

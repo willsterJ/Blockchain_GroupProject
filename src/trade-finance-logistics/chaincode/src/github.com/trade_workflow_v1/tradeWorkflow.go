@@ -468,7 +468,7 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 	} else {
 		// check if item exists, and if it does, find lowest priced item in the category
 		var queryString string
-		queryString = "{\"selector\":{\"descriptionOfGoods\":\""+tradeAgreement.DescriptionOfGoods+"\"}}"
+		//queryString = "{\"selector\":{\"descriptionOfGoods\":\""+tradeAgreement.DescriptionOfGoods+"\"}}"
 		queryString = fmt.Sprintf("{\"selector\":{\"docType\":\"itemEntry\",\"descriptionOfGoods\":\"%s\"}}", tradeAgreement.DescriptionOfGoods)
 		resultsIterator, err := stub.GetQueryResult(queryString)
 		if err != nil {
@@ -481,6 +481,7 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 		min_price = math.MaxFloat64
 		var itemEntry *ItemEntry
 		var itemEntryBytes []byte
+		
 		// iterate through query result
 		for resultsIterator.HasNext() {
 			queryResponse, err := resultsIterator.Next()
@@ -488,18 +489,18 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 				return shim.Error("Failed to get query response iterator.")
 			}
 
-			itemId := queryResponse.GetKey()
-			itemEntryBytes, err = stub.GetState(itemId)	// get record
+			itemId := queryResponse.GetKey() // get key from current entry
+			itemEntryBytes, err = stub.GetState(itemId)	// get record from key
 			if err != nil {
 				return shim.Error("Failed to get item:" + itemId)
 			}
-			err = json.Unmarshal(itemEntryBytes, &itemEntry)
+			err = json.Unmarshal(itemEntryBytes, &itemEntry)  // get item entry
 			if err != nil {
 				return shim.Error(err.Error())
 			}
 			fmt.Printf("Key: %s, Price:%f\n", itemId, itemEntry.Price)
 
-			// check if item exists and in that quantity
+			// check if item exists and in that quantity. Find item with minimum price.
 			if (itemEntry.Count >= 0 && itemEntry.Count >= tradeAgreement.Amount && itemEntry.Price < min_price){
 				min_price = itemEntry.Price
 				min_key = itemId
@@ -530,7 +531,7 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 			if err != nil {
 				return shim.Error(err.Error())
 			}
-			// decrement the count of item in DB
+			// decrement the count of item in DB according to the requested amount.
 			itemEntry.Count -= tradeAgreement.Amount
 			itemEntryBytes, _ = json.Marshal(itemEntry)
 			err = stub.PutState(min_key, itemEntryBytes)
@@ -1405,8 +1406,9 @@ func (t *TradeWorkflowChaincode) getShipmentStatus(stub shim.ChaincodeStubInterf
 		return shim.Error(err.Error())
 	}
 
-	fmt.Printf("Shipment %s is %s\n", args[0], billOfLading.Status)
-	return shim.Success(nil)
+	jsonResp := "{\"Status\":\"" + billOfLading.Status + "\"}"
+	fmt.Printf("Query Response:%s\n", jsonResp)
+	return shim.Success([]byte(jsonResp))
 }
 
 func main() {

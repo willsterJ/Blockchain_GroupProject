@@ -38,10 +38,7 @@ invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'ini
 	console.log('initItem SUCCEEDED');
 	console.log('------------------------------');
 	console.log('\n');
-	
-	//ClientUtils.txEventsCleanup();
-	
-	// QUERY: queryItems (Seller)
+		
 	return queryCC.queryChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'queryItems', ["{\"selector\":{\"descriptionOfGoods\":\"laptop\"}}"], 'Seller');
 }, (err) => {
 	console.log('\n');
@@ -52,11 +49,240 @@ invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'ini
 	console.log('\n');
 	process.exit(1);
 })
+// QUERY: queryItems (Seller)
+.then((result) => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE QUERY COMPLETE');
+	console.log('queryItems VALUE:', result);
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'updateItem', ["SellerOrgMSPlaptop", "2"], 'Seller');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE QUERY FAILED:', err);
+	console.log('queryItems FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// INVOKE: updateItem (Seller)
+.then(() => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE INVOCATION COMPLETE');
+	console.log('updateItem SUCCEEDED');
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return queryCC.queryChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'queryItems', ["{\"selector\":{\"descriptionOfGoods\":\"laptop\"}}"], 'Seller');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE INVOCATION FAILED:', err);
+	console.log('updateItem FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// QUERY: queryItems (Seller)
+.then((result) => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE QUERY COMPLETE');
+	console.log('queryItems VALUE:', result);
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'requestAdvertisement', ["adv-1", "middleman", "SellerOrgMSPlaptop", "0.08"], 'Seller');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE QUERY FAILED:', err);
+	console.log('queryItems FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// INVOKE: requestAdvertisement (Seller)
+.then(() => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE INVOCATION COMPLETE');
+	console.log('requestAdvertisement SUCCEEDED');
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return invokeCC.invokeChaincode(Constants.MIDDLEMAN_ORG, Constants.CHAINCODE_VERSION, 'acceptAdvertisement', ["adv-1"], 'Middleman');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE INVOCATION FAILED:', err);
+	console.log('requestAdvertisement FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// INVOKE: acceptAdvertisement (Middleman)
+.then(() => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE INVOCATION COMPLETE');
+	console.log('acceptAdvertisement SUCCEEDED');
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'requestStorage', ["store-1", "warehouse", "SellerOrgMSPlaptop", "0.08"], 'Seller');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE INVOCATION FAILED:', err);
+	console.log('acceptAdvertisement FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// INVOKE: requestStorage (Seller)
+.then(() => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE INVOCATION COMPLETE');
+	console.log('requestStorage SUCCEEDED');
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return invokeCC.invokeChaincode(Constants.WAREHOUSE_ORG, Constants.CHAINCODE_VERSION, 'acceptStorage', ["store-1"], 'Warehouse');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE INVOCATION FAILED:', err);
+	console.log('requestStorage FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// INVOKE: acceptStorage (Warehouse)
+.then(() => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE INVOCATION COMPLETE');
+	console.log('acceptStorage SUCCEEDED');
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return invokeCC.invokeChaincode(Constants.BUYER_ORG, Constants.CHAINCODE_VERSION, 'requestTrade', ["trade-1", "1", "laptop"], 'Buyer');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE INVOCATION FAILED:', err);
+	console.log('acceptStorage FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// INVOKE: requestTrade (Buyer)
+.then(() => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE INVOCATION COMPLETE');
+	console.log('requestTrade SUCCEEDED');
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return invokeCC.invokeChaincode(Constants.MIDDLEMAN_ORG, Constants.CHAINCODE_VERSION, 'acceptTrade', ["trade-1"], 'Middleman');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE INVOCATION FAILED:', err);
+	console.log('requestTrade FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// INVOKE: acceptTrade (Middleman)
+.then(() => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE INVOCATION COMPLETE');
+	console.log('acceptTrade SUCCEEDED');
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return invokeCC.invokeChaincode(Constants.CARRIER_ORG, Constants.CHAINCODE_VERSION, 'prepareShipment', ["ship-1","SellerOrgMSP", "SellerOrgMSPlaptop", "1", "BuyerOrgMSP"], 'Carrier');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE INVOCATION FAILED:', err);
+	console.log('acceptTrade FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// INVOKE: prepareShipment (Carrier)
+.then(() => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE INVOCATION COMPLETE');
+	console.log('prepareShipment SUCCEEDED');
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return queryCC.queryChaincode(Constants.BUYER_ORG, Constants.CHAINCODE_VERSION, 'getShipmentStatus', ["ship-1"], 'Buyer');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE INVOCATION FAILED:', err);
+	console.log('prepareShipment FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// QUERY: getShipmentStatus (Buyer)
+.then((result) => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE QUERY COMPLETE');
+	console.log('getShipmentStatus VALUE:', result);
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return invokeCC.invokeChaincode(Constants.CARRIER_ORG, Constants.CHAINCODE_VERSION, 'deliverShipment', ["ship-1"], 'Carrier');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE QUERY FAILED:', err);
+	console.log('getShipmentStatus FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// INVOKE: deliverShipment (Carrier)
+.then(() => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE INVOCATION COMPLETE');
+	console.log('deliverShipment SUCCEEDED');
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return queryCC.queryChaincode(Constants.BUYER_ORG, Constants.CHAINCODE_VERSION, 'getShipmentStatus', ["ship-1"], 'Buyer');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE INVOCATION FAILED:', err);
+	console.log('deliverShipment FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// QUERY: getShipmentStatus (Buyer)
 .then((result) => {
 	console.log('\n');
 	console.log('-------------------------');
 	console.log('CHAINCODE QUERY COMPLETE');
-	console.log('queryItems VALUE:', result);
+	console.log('getShipmentStatus VALUE:', result);
 	console.log('-------------------------');
 	console.log('\n');
 
@@ -65,7 +291,7 @@ invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'ini
 	console.log('\n');
 	console.log('------------------------');
 	console.log('CHAINCODE QUERY FAILED:', err);
-	console.log('queryItems FAILED');
+	console.log('getShipmentStatus FAILED');
 	console.log('------------------------');
 	console.log('\n');
 	process.exit(1);
