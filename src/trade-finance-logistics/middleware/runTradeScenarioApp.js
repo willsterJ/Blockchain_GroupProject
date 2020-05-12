@@ -278,11 +278,144 @@ invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'ini
 	process.exit(1);
 })
 // QUERY: getShipmentStatus (Buyer)
+.then(() => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE QUERY COMPLETE');
+	console.log('getShipmentStatus VALUE:', result);
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return queryCC.queryChaincode(Constants.MIDDLEMAN_ORG, Constants.CHAINCODE_VERSION, 'requestPayment', ["trade-1"], 'Middleman');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE QUERY FAILED:', err);
+	console.log('getShipmentStatus FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// INVOKE: requestPayment (Middleman)
+.then(() => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE INVOCATION COMPLETE');
+	console.log('requestPayment SUCCEEDED');
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return invokeCC.invokeChaincode(Constants.BUYER_ORG, Constants.CHAINCODE_VERSION, 'makePayment', ["trade-1"], 'Buyer');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE INVOCATION FAILED');
+	console.log('requestPayment FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// INVOKE: makePayment (Buyer)
+.then(() => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE INVOCATION COMPLETE');
+	console.log('makePayment SUCCEEDED');
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return queryCC.queryChaincode(Constants.BUYER_ORG, Constants.CHAINCODE_VERSION, 'getAccountBalance', ["trade-1", "buyer"], 'Buyer');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE INVOCATION FAILED');
+	console.log('makePayment FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// QUERY: getAccountBalance (Buyer)
+.then((result) => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE QUERY COMPLETE');
+	console.log('getAccountBalance VALUE:', result);
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return queryCC.queryChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'getAccountBalance', ["trade-1", "seller"], 'Seller');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE QUERY FAILED:', err);
+	console.log('getAccountBalance FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// QUERY: getAccountBalance (Seller)
+.then((result) => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE QUERY COMPLETE');
+	console.log('getAccountBalance VALUE:', result);
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return queryCC.queryChaincode(Constants.MIDDLEMAN_ORG, Constants.CHAINCODE_VERSION, 'getAccountBalance', ["trade-1", "middleman"], 'Middleman');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE QUERY FAILED:', err);
+	console.log('getAccountBalance FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// QUERY: getAccountBalance (Middleman)
+.then((result) => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE QUERY COMPLETE');
+	console.log('getAccountBalance VALUE:', result);
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return queryCC.queryChaincode(Constants.WAREHOUSE_ORG, Constants.CHAINCODE_VERSION, 'getAccountBalance', ["trade-1", "warehouse"], 'Warehouse');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE QUERY FAILED:', err);
+	console.log('getAccountBalance FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// QUERY: getAccountBalance (Warehouse)
+.then((result) => {
+	console.log('\n');
+	console.log('------------------------------');
+	console.log('CHAINCODE QUERY COMPLETE');
+	console.log('getAccountBalance VALUE:', result);
+	console.log('------------------------------');
+	console.log('\n');
+		
+	return queryCC.queryChaincode(Constants.CARRIER_ORG, Constants.CHAINCODE_VERSION, 'getAccountBalance', ["trade-1", "carrier"], 'Carrier');
+}, (err) => {
+	console.log('\n');
+	console.log('-----------------------------');
+	console.log('CHAINCODE QUERY FAILED:', err);
+	console.log('getAccountBalance FAILED');
+	console.log('-----------------------------');
+	console.log('\n');
+	process.exit(1);
+})
+// QUERY: getAccountBalance (Carrier)
 .then((result) => {
 	console.log('\n');
 	console.log('-------------------------');
 	console.log('CHAINCODE QUERY COMPLETE');
-	console.log('getShipmentStatus VALUE:', result);
+	console.log('getAccountBalance VALUE:', result);
 	console.log('-------------------------');
 	console.log('\n');
 
@@ -291,7 +424,7 @@ invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'ini
 	console.log('\n');
 	console.log('------------------------');
 	console.log('CHAINCODE QUERY FAILED:', err);
-	console.log('getShipmentStatus FAILED');
+	console.log('getAccountBalance FAILED');
 	console.log('------------------------');
 	console.log('\n');
 	process.exit(1);
