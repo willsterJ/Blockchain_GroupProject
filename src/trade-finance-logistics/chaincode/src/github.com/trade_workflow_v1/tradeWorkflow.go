@@ -20,9 +20,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
-	"math"
 
 	//"math/rand"
 	"bytes"
@@ -187,6 +187,8 @@ func (t *TradeWorkflowChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Res
 	} else if function == "getShipmentStatus" {
 		// Get shipment status
 		return t.getShipmentStatus(stub, creatorOrg, creatorCertIssuer, args)
+	} else if function == "testEmptyFunction" {
+		return t.testEmptyFunction(stub, creatorOrg, creatorCertIssuer, args)
 	}
 
 	return shim.Error("Invalid invoke function name")
@@ -213,7 +215,7 @@ func (t *TradeWorkflowChaincode) initItem(stub shim.ChaincodeStubInterface, crea
 		if found && err == nil && (role != "seller0" && role != "seller1") {
 			return shim.Error("Caller not a member of Seller Org. Access denied.")
 		}
-	}	
+	}
 	if len(args) != 3 {
 		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 3: {Description of goods, Price, Count}. Found %d", len(args)))
 		return shim.Error(err.Error())
@@ -503,7 +505,7 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 		min_price = math.MaxFloat64
 		var itemEntry *ItemEntry
 		var itemEntryBytes []byte
-		
+
 		// iterate through query result
 		for resultsIterator.HasNext() {
 			queryResponse, err := resultsIterator.Next()
@@ -511,28 +513,28 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 				return shim.Error("Failed to get query response iterator.")
 			}
 
-			itemId := queryResponse.GetKey() // get key from current entry
-			itemEntryBytes, err = stub.GetState(itemId)	// get record from key
+			itemId := queryResponse.GetKey()            // get key from current entry
+			itemEntryBytes, err = stub.GetState(itemId) // get record from key
 			if err != nil {
 				return shim.Error("Failed to get item:" + itemId)
 			}
-			err = json.Unmarshal(itemEntryBytes, &itemEntry)  // get item entry
+			err = json.Unmarshal(itemEntryBytes, &itemEntry) // get item entry
 			if err != nil {
 				return shim.Error(err.Error())
 			}
 			fmt.Printf("Key: %s, Price:%f\n", itemId, itemEntry.Price)
 
 			// check if item exists and in that quantity. Find item with minimum price.
-			if (itemEntry.Count >= 0 && itemEntry.Count >= tradeAgreement.Amount && itemEntry.Price < min_price){
+			if itemEntry.Count >= 0 && itemEntry.Count >= tradeAgreement.Amount && itemEntry.Price < min_price {
 				min_price = itemEntry.Price
 				min_key = itemId
 				fmt.Printf("TEST: key:%s price:%f\n", min_key, min_price)
 			}
 
 		}
-		if min_key == ""{
+		if min_key == "" {
 			fmt.Printf("Trade %s cannot be accepted. No items matching specifications exist\n", args[0])
-		} else{
+		} else {
 			tradeAgreement.Status = ACCEPTED
 			tradeAgreement.ItemId = min_key
 			tradeAgreementBytes, err = json.Marshal(tradeAgreement)
@@ -545,7 +547,7 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 				return shim.Error(err.Error())
 			}
 
-			itemEntryBytes, err = stub.GetState(min_key)	// get record
+			itemEntryBytes, err = stub.GetState(min_key) // get record
 			if err != nil {
 				return shim.Error("Failed to get item:" + min_key)
 			}
@@ -754,7 +756,6 @@ func (t *TradeWorkflowChaincode) makePayment(stub shim.ChaincodeStubInterface, c
 		}
 	}
 
-	
 	// Lookup account balances
 	midBalBytes, err = stub.GetState(midBalKey)
 	if err != nil {
@@ -1374,7 +1375,9 @@ func (t *TradeWorkflowChaincode) prepareShipment(stub shim.ChaincodeStubInterfac
 		return shim.Error("Failed to get item entry:" + err.Error())
 	}
 	err = json.Unmarshal(itemEntryBytes, &itemEntry)
-	if err != nil { return shim.Error(err.Error())}
+	if err != nil {
+		return shim.Error(err.Error())
+	}
 
 	itemEntry.FeeToCarrier = 0.05
 	itemEntryBytes, _ = json.Marshal(itemEntry)
@@ -1478,6 +1481,10 @@ func (t *TradeWorkflowChaincode) getShipmentStatus(stub shim.ChaincodeStubInterf
 	jsonResp := "{\"Status\":\"" + billOfLading.Status + "\"}"
 	fmt.Printf("Query Response:%s\n", jsonResp)
 	return shim.Success([]byte(jsonResp))
+}
+
+func (t *TradeWorkflowChaincode) testEmptyFunction(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
+	return shim.Success(nil)
 }
 
 func main() {

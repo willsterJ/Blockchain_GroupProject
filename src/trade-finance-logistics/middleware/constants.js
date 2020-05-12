@@ -103,7 +103,7 @@ var SEVEN_ORG_MEMBERS_AND_ADMIN = [{
 }, {
 	role: {
 		name: 'member',
-		mspId: 'MiddlemanOrgMSP'
+		mspId: 'Middleman'
 	}
 }, {
 	role: {
@@ -174,11 +174,9 @@ var networkLocation = '../network';
 
 var channelConfig = 'channel-artifacts/channel.tx';
 
-// var BUYER_ORG = 'buyerorg';
-// var SELLER_ORG = 'sellerorg';
 var BUYER0_ORG = 'buyer0org';
-var BUYER1_ORG = 'buyer1org';
 var SELLER0_ORG = 'seller0org';
+var BUYER1_ORG = 'buyer1org';
 var SELLER1_ORG = 'seller1org';
 var MIDDLEMAN_ORG = 'middlemanorg';
 var CARRIER_ORG = 'carrierorg';
@@ -191,7 +189,7 @@ var CHAINCODE_VERSION = 'v1'; // here as well
 var CHAINCODE_UPGRADE_PATH = 'github.com/trade_workflow_v1';
 var CHAINCODE_UPGRADE_VERSION = 'v1';
 
-var TRANSACTION_ENDORSEMENT_POLICY = ALL_SEVEN_ORG_MEMBERS; //Need to change eventually
+var TRANSACTION_ENDORSEMENT_POLICY = ALL_FIVE_ORG_MEMBERS; //Need to change eventually
 
 module.exports = {
 	tempdir: tempdir,
@@ -215,6 +213,5 @@ module.exports = {
 	CHAINCODE_UPGRADE_VERSION: CHAINCODE_UPGRADE_VERSION,
 	ALL_FOUR_ORG_MEMBERS: ALL_FOUR_ORG_MEMBERS,
 	ALL_FIVE_ORG_MEMBERS: ALL_FIVE_ORG_MEMBERS,
-	ALL_SEVEN_ORG_MEMBERS: ALL_SEVEN_ORG_MEMBERS,
 	TRANSACTION_ENDORSEMENT_POLICY: TRANSACTION_ENDORSEMENT_POLICY
 };

@@ -17,12 +17,12 @@
 package main
 
 import (
-	"fmt"
-	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"github.com/hyperledger/fabric/core/chaincode/lib/cid"
 	"crypto/x509"
-)
+	"fmt"
 
+	"github.com/hyperledger/fabric/core/chaincode/lib/cid"
+	"github.com/hyperledger/fabric/core/chaincode/shim"
+)
 
 func getTxCreatorInfo(stub shim.ChaincodeStubInterface) (string, string, error) {
 	var mspid string
@@ -48,7 +48,7 @@ func getTxCreatorInfo(stub shim.ChaincodeStubInterface) (string, string, error) 
 // We will support attribute checks in an upgrade
 
 func authenticateBuyerOrg(mspID string, certCN string) bool {
-	return ((mspID == "Buyer0OrgMSP") && (certCN == "ca.buyer0org.trade.com")) || ((mspID == "Buyer1OrgMSP") && (certCN == "ca.buyer1org.trade.com"))
+	return (mspID == "Buyer0OrgMSP") && (certCN == "ca.buyer0org.trade.com")
 }
 
 func authenticateSellerOrg(mspID string, certCN string) bool {
