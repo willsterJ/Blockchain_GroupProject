@@ -355,7 +355,7 @@ module.exports.getSubmitter = function(client, peerOrgAdmin, org, username) {
 		if (typeof org === 'string') {
 			userOrg = org;
 		} else {
-			userOrg = Constants.BUYER_ORG;
+			userOrg = Constants.BUYER0_ORG;
 		}
 	}
 

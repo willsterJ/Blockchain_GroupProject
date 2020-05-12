@@ -88,7 +88,7 @@ function createChannel(channel_name, constants) {
 	var signatures = [];		// Collect signatures to submit to orderer for channel creation
 
 	// Attempt to create the channel as a client of Constants.BUYERORG
-	var org = ORGS[Constants.BUYER_ORG].name;
+	var org = ORGS[Constants.BUYER0_ORG].name;
 
 	// Use a file-based key-value store for this network instance
 	utils.setConfigSetting('key-value-store', 'fabric-client/lib/impl/FileKeyValueStore.js');

@@ -71,11 +71,11 @@ createChannel.createChannel(Constants.CHANNEL_NAME).then(() => {
 	console.log('\n');
 
 	return instantiateCC.instantiateOrUpgradeChaincode(
-		Constants.BUYER_ORG,
+		Constants.BUYER0_ORG,
 		Constants.CHAINCODE_PATH,
 		Constants.CHAINCODE_VERSION,
 		"init",
-		["Buyer", "100000","Seller","200000","Middleman","200000", "Warehouse","50000", "Carrier", "10000"],
+		["Buyer0", "100000", "Buyer1", "10000", "Seller0","200000", "Seller1", "10000", "Middleman","200000", "Warehouse","50000", "Carrier", "10000"],
 		false
 	);
 }, (err) => {
@@ -95,7 +95,7 @@ createChannel.createChannel(Constants.CHANNEL_NAME).then(() => {
 	console.log('\n');
 	ClientUtils.txEventsCleanup();
 
-	return invokeCC.invokeChaincode(Constants.BUYER_ORG, Constants.CHAINCODE_VERSION, 'requestTrade', ["trade0", "1","test"], 'Buyer');
+	return invokeCC.invokeChaincode(Constants.BUYER0_ORG, Constants.CHAINCODE_VERSION, 'requestTrade', ["trade0", "1","test"], 'Buyer0');
 }, (err) => {
 	console.log('\n');
 	console.log('------------------------------');
@@ -112,7 +112,7 @@ createChannel.createChannel(Constants.CHANNEL_NAME).then(() => {
 	console.log('------------------------------');
 	console.log('\n');
 
-	return queryCC.queryChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'getTradeStatus', ['trade0'], 'Seller');
+	return queryCC.queryChaincode(Constants.SELLER0_ORG, Constants.CHAINCODE_VERSION, 'getTradeStatus', ['trade0'], 'Seller0');
 }, (err) => {
 	console.log('\n');
 	console.log('-----------------------------');
