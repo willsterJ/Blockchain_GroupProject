@@ -12,6 +12,7 @@ peer chaincode invoke -n tw -c '{"Args":["initItem", "laptop", "1200", "20"]}' -
 sleep 2
 peer chaincode invoke -n tw -c '{"Args":["queryItems", "{\"selector\":{\"descriptionOfGoods\":\"laptop\"}}"]}' -C tradechannel
 sleep 2
+# itemId in production mode would be SellerOrgMSPlaptop instead of sellerlaptop
 peer chaincode invoke -n tw -c '{"Args":["updateItem", "sellerlaptop", "2"]}' -C tradechannel
 sleep 2
 

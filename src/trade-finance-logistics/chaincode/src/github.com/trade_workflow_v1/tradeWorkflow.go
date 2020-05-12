@@ -183,10 +183,19 @@ func (t *TradeWorkflowChaincode) initItem(stub shim.ChaincodeStubInterface, crea
 	var price float64
 	var count int
 	var err error
+	var role string
+	var found bool
 
 	if !t.testMode && !authenticateSellerOrg(creatorOrg, creatorCertIssuer) {
 		return shim.Error("Caller not a member of Seller Org. Access denied.")
 	}
+	// Only in testmode, retrieve the role attribute from org
+	if t.testMode{
+		role, found, err = getCustomAttribute(stub, "role")
+		if found && err == nil && role != "seller" {
+			return shim.Error("Caller not a member of Seller Org. Access denied.")
+		}
+	}	
 	if len(args) != 3 {
 		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 3: {Description of goods, Price, Count}. Found %d", len(args)))
 		return shim.Error(err.Error())
@@ -204,8 +213,7 @@ func (t *TradeWorkflowChaincode) initItem(stub shim.ChaincodeStubInterface, crea
 	}
 	if t.testMode {
 		itemId = string(role + "" + itemName)
-	}
-	else {
+	} else {
 		itemId = string(creatorOrg + "" + itemName)
 	}
 
@@ -249,6 +257,9 @@ func (t *TradeWorkflowChaincode) queryItems(stub shim.ChaincodeStubInterface, cr
 	if err != nil {
 		return shim.Error(err.Error())
 	}
+	// jsonResp := "{\"TEST\":\"" + creatorOrg + "\"}"
+	// fmt.Printf("Query Response:%s\n", jsonResp)
+	// return shim.Success([]byte(jsonResp))
 	return shim.Success(queryResults)
 }
 

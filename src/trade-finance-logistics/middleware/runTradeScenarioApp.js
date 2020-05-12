@@ -38,9 +38,11 @@ invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'ini
 	console.log('initItem SUCCEEDED');
 	console.log('------------------------------');
 	console.log('\n');
-
+	
+	//ClientUtils.txEventsCleanup();
+	
 	// QUERY: queryItems (Seller)
-	return invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'queryItems', ["{\"selector\":{\"descriptionOfGoods\":\"laptop\"}}"], 'Seller');
+	return queryCC.queryChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'queryItems', ["{\"selector\":{\"descriptionOfGoods\":\"laptop\"}}"], 'Seller');
 }, (err) => {
 	console.log('\n');
 	console.log('-----------------------------');
@@ -58,50 +60,12 @@ invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'ini
 	console.log('-------------------------');
 	console.log('\n');
 
-	// INVOKE: updateItem (Seller)
-	return invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'updateItem', ["sellerlaptop", "2"], 'Seller');
-}, (err) => {
-	console.log('\n');
-	console.log('------------------------');
-	console.log('CHAINCODE QUERY FAILED:', err);
-	console.log('queryItems FAILED');
-	console.log('------------------------');
-	console.log('\n');
-	process.exit(1);
-})
-.then(() => {
-	console.log('\n');
-	console.log('------------------------------');
-	console.log('CHAINCODE INVOCATION COMPLETE');
-	console.log('updateItem SUCCEEDED');
-	console.log('------------------------------');
-	console.log('\n');
-
-	// INVOKE: requestAdvertisement (Seller)
-	return invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'requestAdvertisement', ["adv-1", "middleman", "sellerlaptop", "0.08"], 'Seller');
-}, (err) => {
-	console.log('\n');
-	console.log('-----------------------------');
-	console.log('CHAINCODE INVOCATION FAILED:', err);
-	console.log('requestAdvertisement FAILED');
-	console.log('-----------------------------');
-	console.log('\n');
-	process.exit(1);
-})
-.then((result) => {
-	console.log('\n');
-	console.log('-------------------------');
-	console.log('CHAINCODE QUERY COMPLETE');
-	console.log('requestAdvertisement VALUE:', result);
-	console.log('-------------------------');
-	console.log('\n');
-
 	ClientUtils.txEventsCleanup();
 }, (err) => {
 	console.log('\n');
 	console.log('------------------------');
 	console.log('CHAINCODE QUERY FAILED:', err);
-	console.log('getAccountBalance FAILED');
+	console.log('queryItems FAILED');
 	console.log('------------------------');
 	console.log('\n');
 	process.exit(1);
