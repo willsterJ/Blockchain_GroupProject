@@ -547,8 +547,8 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 
 // Request a payment
 func (t *TradeWorkflowChaincode) requestPayment(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args []string) pb.Response {
-	var paymentKey, tradeKey string
-	var paymentBytes, tradeAgreementBytes []byte
+	var shipmentLocationKey, paymentKey, tradeKey string
+	var shipmentLocationBytes, paymentBytes, tradeAgreementBytes []byte
 	var tradeAgreement *TradeAgreement
 	var err error
 
@@ -583,16 +583,16 @@ func (t *TradeWorkflowChaincode) requestPayment(stub shim.ChaincodeStubInterface
 		return shim.Error(err.Error())
 	}
 
-	// // Lookup shipment location from the ledger
-	// shipmentLocationKey, err = getShipmentLocationKey(stub, args[0])
-	// if err != nil {
-	// 	return shim.Error(err.Error())
-	// }
+	// Lookup shipment location from the ledger
+	shipmentLocationKey, err = getShipmentLocationKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
 
-	// shipmentLocationBytes, err = stub.GetState(shipmentLocationKey)
-	// if err != nil {
-	// 	return shim.Error(err.Error())
-	// }
+	shipmentLocationBytes, err = stub.GetState(shipmentLocationKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
 
 	// if len(shipmentLocationBytes) == 0 {
 	// 	fmt.Printf("Shipment for trade %s has not been prepared yet", args[0])
@@ -611,25 +611,25 @@ func (t *TradeWorkflowChaincode) requestPayment(stub shim.ChaincodeStubInterface
 
 	if len(paymentBytes) != 0 { // The value doesn't matter as this is a temporary key used as a marker
 		fmt.Printf("Payment request already pending for trade %s\n", args[0])
+	} else {
+		// Check what has been paid up to this point
+		// fmt.Printf("Amount paid thus far for trade %s = %d; total required = %d\n", args[0], tradeAgreement.Payment, tradeAgreement.Amount)
+		if tradeAgreement.Amount == tradeAgreement.Payment { // Payment has already been settled
+			fmt.Printf("Payment already settled for trade %s\n", args[0])
+			return shim.Error("Payment already settled")
+		}
+		if string(shipmentLocationBytes) == SOURCE && tradeAgreement.Payment != 0 { // Suppress duplicate requests for partial payment
+			fmt.Printf("Partial payment already made for trade %s\n", args[0])
+			return shim.Error("Partial payment already made")
+		}
+
+		// Record request on ledger
+		err = stub.PutState(paymentKey, []byte(REQUESTED))
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		fmt.Printf("Payment request for trade %s recorded\n", args[0])
 	}
-	// else {
-	// 	// Check what has been paid up to this point
-	// 	fmt.Printf("Amount paid thus far for trade %s = %d; total required = %d\n", args[0], tradeAgreement.Payment, tradeAgreement.Amount)
-	// 	if tradeAgreement.Amount == tradeAgreement.Payment { // Payment has already been settled
-	// 		fmt.Printf("Payment already settled for trade %s\n", args[0])
-	// 		return shim.Error("Payment already settled")
-	// 	}
-	// 	if string(shipmentLocationBytes) == SOURCE && tradeAgreement.Payment != 0 { // Suppress duplicate requests for partial payment
-	// 		fmt.Printf("Partial payment already made for trade %s\n", args[0])
-	// 		return shim.Error("Partial payment already made")
-	// 	}
-	// }
-	// Record request on ledger
-	err = stub.PutState(paymentKey, []byte(REQUESTED))
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	fmt.Printf("Payment request for trade %s recorded\n", args[0])
 	return shim.Success(nil)
 }
 
@@ -757,6 +757,7 @@ func (t *TradeWorkflowChaincode) makePayment(stub shim.ChaincodeStubInterface, c
 	if buyBal < paymentAmount {
 		fmt.Printf("Buyer's bank balance %d is insufficient to cover payment amount %d\n", buyBal, paymentAmount)
 	}
+
 	buyBal -= paymentAmount
 
 	// Update ledger state

@@ -278,7 +278,7 @@ invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'ini
 	process.exit(1);
 })
 // QUERY: getShipmentStatus (Buyer)
-.then(() => {
+.then((result) => {
 	console.log('\n');
 	console.log('------------------------------');
 	console.log('CHAINCODE QUERY COMPLETE');
@@ -286,7 +286,7 @@ invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'ini
 	console.log('------------------------------');
 	console.log('\n');
 		
-	return queryCC.queryChaincode(Constants.MIDDLEMAN_ORG, Constants.CHAINCODE_VERSION, 'requestPayment', ["trade-1"], 'Middleman');
+	return invokeCC.invokeChaincode(Constants.MIDDLEMAN_ORG, Constants.CHAINCODE_VERSION, 'requestPayment', ["trade-1"], 'Middleman');
 }, (err) => {
 	console.log('\n');
 	console.log('-----------------------------');
@@ -309,7 +309,7 @@ invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'ini
 }, (err) => {
 	console.log('\n');
 	console.log('-----------------------------');
-	console.log('CHAINCODE INVOCATION FAILED');
+	console.log('CHAINCODE INVOCATION FAILED:', err);
 	console.log('requestPayment FAILED');
 	console.log('-----------------------------');
 	console.log('\n');
@@ -328,7 +328,7 @@ invokeCC.invokeChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'ini
 }, (err) => {
 	console.log('\n');
 	console.log('-----------------------------');
-	console.log('CHAINCODE INVOCATION FAILED');
+	console.log('CHAINCODE INVOCATION FAILED:', err);
 	console.log('makePayment FAILED');
 	console.log('-----------------------------');
 	console.log('\n');
