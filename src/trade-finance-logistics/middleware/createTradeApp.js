@@ -71,11 +71,11 @@ createChannel.createChannel(Constants.CHANNEL_NAME).then(() => {
 	console.log('\n');
 
 	return instantiateCC.instantiateOrUpgradeChaincode(
-		Constants.IMPORTER_ORG,
+		Constants.BUYER_ORG,
 		Constants.CHAINCODE_PATH,
 		Constants.CHAINCODE_VERSION,
-		'init',
-		['LumberInc', 'LumberBank', '100000', 'WoodenToys', 'ToyBank', '200000', 'UniversalFrieght', 'ForestryDepartment'],
+		"init",
+		["Buyer", "100000","Seller","200000","Middleman","200000", "Warehouse","50000", "Carrier", "10000"],
 		false
 	);
 }, (err) => {
@@ -95,7 +95,7 @@ createChannel.createChannel(Constants.CHANNEL_NAME).then(() => {
 	console.log('\n');
 	ClientUtils.txEventsCleanup();
 
-	return invokeCC.invokeChaincode(Constants.IMPORTER_ORG, Constants.CHAINCODE_VERSION, 'requestTrade', ['2ks89j9', '50000','Wood for Toys'], 'Importer');
+	return invokeCC.invokeChaincode(Constants.BUYER_ORG, Constants.CHAINCODE_VERSION, 'requestTrade', ["trade0", "1","test"], 'Buyer');
 }, (err) => {
 	console.log('\n');
 	console.log('------------------------------');
@@ -112,7 +112,7 @@ createChannel.createChannel(Constants.CHANNEL_NAME).then(() => {
 	console.log('------------------------------');
 	console.log('\n');
 
-	return queryCC.queryChaincode(Constants.EXPORTER_ORG, Constants.CHAINCODE_VERSION, 'getTradeStatus', ['2ks89j9'], 'Exporter');
+	return queryCC.queryChaincode(Constants.SELLER_ORG, Constants.CHAINCODE_VERSION, 'getTradeStatus', ['trade0'], 'Seller');
 }, (err) => {
 	console.log('\n');
 	console.log('-----------------------------');

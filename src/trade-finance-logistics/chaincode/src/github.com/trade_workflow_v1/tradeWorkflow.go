@@ -183,15 +183,19 @@ func (t *TradeWorkflowChaincode) initItem(stub shim.ChaincodeStubInterface, crea
 	var price float64
 	var count int
 	var err error
+	var role string
+	var found bool
 
 	if !t.testMode && !authenticateSellerOrg(creatorOrg, creatorCertIssuer) {
 		return shim.Error("Caller not a member of Seller Org. Access denied.")
 	}
 	// Only in testmode, retrieve the role attribute from org
-	role, found, err1 := getCustomAttribute(stub, "role")
-	if t.testMode && found && err1 == nil && role != "seller" {
-		return shim.Error("Caller not a member of Seller Org. Access denied.")
-	}
+	if t.testMode{
+		role, found, err = getCustomAttribute(stub, "role")
+		if found && err == nil && role != "seller" {
+			return shim.Error("Caller not a member of Seller Org. Access denied.")
+		}
+	}	
 	if len(args) != 3 {
 		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 3: {Description of goods, Price, Count}. Found %d", len(args)))
 		return shim.Error(err.Error())
@@ -209,6 +213,8 @@ func (t *TradeWorkflowChaincode) initItem(stub shim.ChaincodeStubInterface, crea
 	}
 	if t.testMode {
 		itemId = string(role + "" + itemName)
+	} else {
+		itemId = string(creatorOrg + "" + itemName)
 	}
 
 	// check if item already exists
@@ -251,6 +257,9 @@ func (t *TradeWorkflowChaincode) queryItems(stub shim.ChaincodeStubInterface, cr
 	if err != nil {
 		return shim.Error(err.Error())
 	}
+	// jsonResp := "{\"TEST\":\"" + creatorOrg + "\"}"
+	// fmt.Printf("Query Response:%s\n", jsonResp)
+	// return shim.Success([]byte(jsonResp))
 	return shim.Success(queryResults)
 }
 
@@ -377,19 +386,19 @@ func (t *TradeWorkflowChaincode) requestTrade(stub shim.ChaincodeStubInterface, 
 		return shim.Error(err.Error())
 	}
 
-	// check if trade agreement already exists
-	tradeKey, err = getTradeKey(stub, args[0])
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	tradeAgreementBytes, err = stub.GetState(tradeKey)
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-	if len(tradeAgreementBytes) != 0 {
-		err = errors.New(fmt.Sprintf("Trade request already found for trade ID %s", args[0]))
-		return shim.Error(err.Error())
-	}
+	// // check if trade agreement already exists
+	// tradeKey, err = getTradeKey(stub, args[0])
+	// if err != nil {
+	// 	return shim.Error(err.Error())
+	// }
+	// tradeAgreementBytes, err = stub.GetState(tradeKey)
+	// if err != nil {
+	// 	return shim.Error(err.Error())
+	// }
+	// if len(tradeAgreementBytes) != 0 {
+	// 	err = errors.New(fmt.Sprintf("Trade request already found for trade ID %s", args[0]))
+	// 	return shim.Error(err.Error())
+	// }
 
 	// now add trade request to ledger
 	amount, err = strconv.Atoi(string(args[1]))
@@ -459,7 +468,7 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 	} else {
 		// check if item exists, and if it does, find lowest priced item in the category
 		var queryString string
-		queryString = "{\"selector\":{\"descriptionOfGoods\":\""+tradeAgreement.DescriptionOfGoods+"\"}}"
+		//queryString = "{\"selector\":{\"descriptionOfGoods\":\""+tradeAgreement.DescriptionOfGoods+"\"}}"
 		queryString = fmt.Sprintf("{\"selector\":{\"docType\":\"itemEntry\",\"descriptionOfGoods\":\"%s\"}}", tradeAgreement.DescriptionOfGoods)
 		resultsIterator, err := stub.GetQueryResult(queryString)
 		if err != nil {
@@ -472,6 +481,7 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 		min_price = math.MaxFloat64
 		var itemEntry *ItemEntry
 		var itemEntryBytes []byte
+		
 		// iterate through query result
 		for resultsIterator.HasNext() {
 			queryResponse, err := resultsIterator.Next()
@@ -479,18 +489,18 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 				return shim.Error("Failed to get query response iterator.")
 			}
 
-			itemId := queryResponse.GetKey()
-			itemEntryBytes, err = stub.GetState(itemId)	// get record
+			itemId := queryResponse.GetKey() // get key from current entry
+			itemEntryBytes, err = stub.GetState(itemId)	// get record from key
 			if err != nil {
 				return shim.Error("Failed to get item:" + itemId)
 			}
-			err = json.Unmarshal(itemEntryBytes, &itemEntry)
+			err = json.Unmarshal(itemEntryBytes, &itemEntry)  // get item entry
 			if err != nil {
 				return shim.Error(err.Error())
 			}
 			fmt.Printf("Key: %s, Price:%f\n", itemId, itemEntry.Price)
 
-			// check if item exists and in that quantity
+			// check if item exists and in that quantity. Find item with minimum price.
 			if (itemEntry.Count >= 0 && itemEntry.Count >= tradeAgreement.Amount && itemEntry.Price < min_price){
 				min_price = itemEntry.Price
 				min_key = itemId
@@ -521,7 +531,7 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 			if err != nil {
 				return shim.Error(err.Error())
 			}
-			// decrement the count of item in DB
+			// decrement the count of item in DB according to the requested amount.
 			itemEntry.Count -= tradeAgreement.Amount
 			itemEntryBytes, _ = json.Marshal(itemEntry)
 			err = stub.PutState(min_key, itemEntryBytes)
@@ -1396,13 +1406,14 @@ func (t *TradeWorkflowChaincode) getShipmentStatus(stub shim.ChaincodeStubInterf
 		return shim.Error(err.Error())
 	}
 
-	fmt.Printf("Shipment %s is %s\n", args[0], billOfLading.Status)
-	return shim.Success(nil)
+	jsonResp := "{\"Status\":\"" + billOfLading.Status + "\"}"
+	fmt.Printf("Query Response:%s\n", jsonResp)
+	return shim.Success([]byte(jsonResp))
 }
 
 func main() {
 	twc := new(TradeWorkflowChaincode)
-	twc.testMode = true
+	twc.testMode = false
 	err := shim.Start(twc)
 	if err != nil {
 		fmt.Printf("Error starting Trade Workflow chaincode: %s\n", err)

@@ -27,6 +27,17 @@ volumes:
 networks:
   trade:
 services:
+  couchdb:
+    container_name: couchdb0
+    image: couchdb:2.3
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    ports:
+      - "5984:5984"
+    networks:
+      - trade
+
   seller-ca:
     image: hyperledger/fabric-ca:$IMAGE_TAG
     environment:
@@ -35,11 +46,17 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.sellerorg.trade.com-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/SELLER_CA_PRIVATE_KEY
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     ports:
       - "7054:7054"
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.sellerorg.trade.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/SELLER_CA_PRIVATE_KEY -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/sellerorg.trade.com/ca/:/etc/hyperledger/fabric-ca-server-config
+
     container_name: ca_peerSellerOrg
     networks:
       - trade
@@ -52,6 +69,11 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.buyerorg.trade.com-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/BUYER_CA_PRIVATE_KEY
+      
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     ports:
       - "8054:7054"
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.buyerorg.trade.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/BUYER_CA_PRIVATE_KEY -b admin:adminpw -d'
@@ -69,6 +91,11 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.carrierorg.trade.com-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CARRIER_CA_PRIVATE_KEY
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     ports:
       - "9054:7054"
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.carrierorg.trade.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CARRIER_CA_PRIVATE_KEY -b admin:adminpw -d'
@@ -86,6 +113,11 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.middlemanorg.trade.com-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/MIDDLEMAN_CA_PRIVATE_KEY
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     ports:
       - "10054:7054"
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.middlemanorg.trade.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/MIDDLEMAN_CA_PRIVATE_KEY -b admin:adminpw -d'
@@ -103,6 +135,11 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.warehouseorg.trade.com-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/WAREHOUSE_CA_PRIVATE_KEY
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     ports:
       - "11054:7054"
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.warehouseorg.trade.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/WAREHOUSE_CA_PRIVATE_KEY -b admin:adminpw -d'

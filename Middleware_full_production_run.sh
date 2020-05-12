@@ -18,6 +18,7 @@ rm add_org/docker-compose-lendingOrg.yaml
 
 echo -e "\nNow bringing the network down and back up again\n"
 echo "Y" | ./trade.sh down
+echo "Y" | ./trade.sh down -d true
 echo -e "\nThere may be 'orphans' relating to exportingEntityOrg', so doing another sweep of the containers"
 CONTAINER_IDS=$(docker ps -aq)
 if [ -z "$CONTAINER_IDS" -o "$CONTAINER_IDS" == " " ]; then
@@ -68,6 +69,7 @@ echo -e "\nNow launching createTradeApp.js "
 node createTradeApp.js
 
 echo -e "\nNow launching runTradeScenarioApp.js "
+sleep 2
 
 node runTradeScenarioApp.js
 
