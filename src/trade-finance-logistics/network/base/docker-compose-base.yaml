@@ -65,6 +65,11 @@ services:
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.seller0org.trade.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.seller0org.trade.com:7051
       - CORE_PEER_LOCALMSPID=Seller0OrgMSP
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/seller0org.trade.com/peers/peer0.seller0org.trade.com/msp:/etc/hyperledger/fabric/msp
@@ -86,6 +91,11 @@ services:
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.seller1org.trade.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.seller1org.trade.com:7051
       - CORE_PEER_LOCALMSPID=Seller1OrgMSP
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/seller1org.trade.com/peers/peer0.seller1org.trade.com/msp:/etc/hyperledger/fabric/msp
@@ -107,6 +117,11 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.buyer0org.trade.com:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.buyer0org.trade.com:7051
       - CORE_PEER_LOCALMSPID=Buyer0OrgMSP
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/buyer0org.trade.com/peers/peer0.buyer0org.trade.com/msp:/etc/hyperledger/fabric/msp
@@ -129,6 +144,11 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.buyer1org.trade.com:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.buyer1org.trade.com:7051
       - CORE_PEER_LOCALMSPID=Buyer1OrgMSP
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/buyer1org.trade.com/peers/peer0.buyer1org.trade.com/msp:/etc/hyperledger/fabric/msp
@@ -151,6 +171,11 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.carrierorg.trade.com:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.carrierorg.trade.com:7051
       - CORE_PEER_LOCALMSPID=CarrierOrgMSP
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/carrierorg.trade.com/peers/peer0.carrierorg.trade.com/msp:/etc/hyperledger/fabric/msp
@@ -172,6 +197,11 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.middlemanorg.trade.com:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.middlemanorg.trade.com:7051
       - CORE_PEER_LOCALMSPID=MiddlemanOrgMSP
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/middlemanorg.trade.com/peers/peer0.middlemanorg.trade.com/msp:/etc/hyperledger/fabric/msp
@@ -193,6 +223,11 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.warehouseorg.trade.com:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.warehouseorg.trade.com:7051
       - CORE_PEER_LOCALMSPID=WarehouseOrgMSP
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/warehouseorg.trade.com/peers/peer0.warehouseorg.trade.com/msp:/etc/hyperledger/fabric/msp
