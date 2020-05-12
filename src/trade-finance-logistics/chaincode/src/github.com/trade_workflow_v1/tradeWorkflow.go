@@ -187,11 +187,6 @@ func (t *TradeWorkflowChaincode) initItem(stub shim.ChaincodeStubInterface, crea
 	if !t.testMode && !authenticateSellerOrg(creatorOrg, creatorCertIssuer) {
 		return shim.Error("Caller not a member of Seller Org. Access denied.")
 	}
-	// Only in testmode, retrieve the role attribute from org
-	role, found, err1 := getCustomAttribute(stub, "role")
-	if t.testMode && found && err1 == nil && role != "seller" {
-		return shim.Error("Caller not a member of Seller Org. Access denied.")
-	}
 	if len(args) != 3 {
 		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 3: {Description of goods, Price, Count}. Found %d", len(args)))
 		return shim.Error(err.Error())
@@ -209,6 +204,9 @@ func (t *TradeWorkflowChaincode) initItem(stub shim.ChaincodeStubInterface, crea
 	}
 	if t.testMode {
 		itemId = string(role + "" + itemName)
+	}
+	else {
+		itemId = string(creatorOrg + "" + itemName)
 	}
 
 	// check if item already exists
