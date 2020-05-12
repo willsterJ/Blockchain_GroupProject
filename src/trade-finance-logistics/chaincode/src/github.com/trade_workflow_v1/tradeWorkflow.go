@@ -1010,25 +1010,25 @@ func (t *TradeWorkflowChaincode) getAccountBalance(stub shim.ChaincodeStubInterf
 	}
 
 	entity = strings.ToLower(args[1])
-	if entity == "Seller0OrgMSP" {
+	if entity == "seller0" {
 		// Access control: Only an Exporter or Exporting Entity Org member can invoke this transaction
 		if !t.testMode && !authenticateSellerOrg(creatorOrg, creatorCertIssuer) {
 			return shim.Error("Caller not a member of Seller Org. Access denied.")
 		}
 		balanceKey = sel0BalKey
-	} else if entity == "Seller1OrgMSP" {
+	} else if entity == "seller1" {
 		// Access control: Only an Importer Org member can invoke this transaction
 		if !t.testMode && !authenticateSellerOrg(creatorOrg, creatorCertIssuer) {
 			return shim.Error("Caller not a member of Buyer Org. Access denied.")
 		}
 		balanceKey = sel1BalKey
-	} else if entity == "Buyer0OrgMSP" {
+	} else if entity == "buyer0" {
 		// Access control: Only an Exporter or Exporting Entity Org member can invoke this transaction
 		if !t.testMode && !authenticateBuyerOrg(creatorOrg, creatorCertIssuer) {
 			return shim.Error("Caller not a member of Buyer Org. Access denied.")
 		}
 		balanceKey = buy0BalKey
-	} else if entity == "Buyer1OrgMSP" {
+	} else if entity == "buyer1" {
 		// Access control: Only an Importer Org member can invoke this transaction
 		if !t.testMode && !authenticateBuyerOrg(creatorOrg, creatorCertIssuer) {
 			return shim.Error("Caller not a member of Buyer Org. Access denied.")
