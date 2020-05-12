@@ -18,10 +18,14 @@ package main
 
 // Key names
 const (
-	buyKey = "Buyer"
-	buyBalKey = "BuyersAccountBalance"
-	selKey = "Seller"
-	selBalKey = "SellersAccountBalance"
+	buy0Key = "Buyer0"
+	buy0BalKey = "Buyer0sAccountBalance"
+	buy1Key = "Buyer1"
+	buy1BalKey = "Buyer1sAccountBalance"
+	sel0Key = "Seller0"
+	sel0BalKey = "Seller0sAccountBalance"
+	sel1Key = "Seller1"
+	sel1BalKey = "Seller1sAccountBalance"
 	midKey = "Middleman"
 	midBalKey = "MiddlemansAccountBalance"
 	warKey = "Warehouse"
