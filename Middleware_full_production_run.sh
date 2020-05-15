@@ -54,8 +54,8 @@ echo "Generated config files for the new network"
 echo "Y" | ./trade.sh up
 echo -e "Launched the 9 containers for the network\n"
 
-echo -e "Sleeping for 25 seconds to let containers come up\n"
-sleep 25
+echo -e "Sleeping for 50 seconds to let containers come up\n"
+sleep 50
 
 echo -e "\nListing the active docker containers\n"
 docker ps -a

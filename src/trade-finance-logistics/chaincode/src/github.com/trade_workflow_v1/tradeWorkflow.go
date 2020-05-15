@@ -528,7 +528,7 @@ func (t *TradeWorkflowChaincode) acceptTrade(stub shim.ChaincodeStubInterface, c
 			if itemEntry.Count >= 0 && itemEntry.Count >= tradeAgreement.Amount && itemEntry.Price < min_price {
 				min_price = itemEntry.Price
 				min_key = itemId
-				fmt.Printf("TEST: key:%s price:%f\n", min_key, min_price)
+				// fmt.Printf("TEST: key:%s price:%f\n", min_key, min_price)
 			}
 
 		}
